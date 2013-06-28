@@ -31,26 +31,11 @@
 
 - (void) dictionaeryStart
 {
-	dictlist = [NSArray arrayWithObjects:
-				@"xi", @"di", @"bi",
-				@"ki", @"ti", @"pi",
-				@"si", @"li", @"vi",
-				
-				@"xa", @"da", @"ba",
-				@"ka", @"ta", @"pa",
-				@"sa", @"la", @"va",
-				
-				@"xo", @"do", @"bo",
-				@"ko", @"to", @"po",
-				@"so", @"lo", @"vo",
-				nil];
+	// Node is API return, array of all translations
 	
-	dict = [[NSMutableDictionary alloc] init];	
-	
-	NSMutableArray *node = [NSMutableArray arrayWithObjects:@"",nil];
+	node = [NSMutableArray arrayWithObjects:@"",nil];
 	
 	int myCount = 0;
-	
 	while ( myCount < 90 )
 	{
 		myCount++;
@@ -59,15 +44,17 @@
 	
 	node[0]		= [NSArray arrayWithObjects: @"xi", @"Notes", @"psychology", @"Something else", @"3rd", nil];
 	node[1]		= [NSArray arrayWithObjects: @"di", @"Notes", @"physionomy", @"Something else", @"3rd", nil];
-	node[2]		= [NSArray arrayWithObjects: @"xidi", @"Notes", @"psychology", @"Something else", @"3rd", nil];
+	node[2]		= [NSArray arrayWithObjects: @"xidi", @"Notes", @"something else", @"Something else", @"3rd", nil];
 	
-	for ( NSArray *test in node ){
-		[dict setObject:test[2] forKey: test[0] ];
-	}
+	// Populate dictionary with all translations
 	
-	[dict setObject:@"Psychology" forKey:@"xi"];
+	[self dictionaeryFilter];
 	
 	NSLog(@"%@",dict);
+//
+//	[dict setObject:@"Psychology" forKey:@"xi"];
+//	
+//	NSLog(@"%@",dict);
 	
 	// Get
 	// NSString *valueStr = [dict objectForKey:@"Key2"];
@@ -95,11 +82,11 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return 27;
+	
+	return [dict count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-	
 	
 	
 	// Draw cells
@@ -107,10 +94,9 @@
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MainCell"];
 	if(cell == nil){ cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"MainCell"]; }
 	
-	cell.textLabel.text = [NSString stringWithFormat:@"%@",dictlist[indexPath.row]];
-	cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [dict objectForKey:dictlist[indexPath.row]] ];
+	cell.textLabel.text = dictlist[indexPath.row];
+	cell.detailTextLabel.text = dict[dictlist[indexPath.row]];
 	cell = [self templateCell:cell:indexPath];
-	
 	
 	// Store cell id
 	
@@ -125,8 +111,36 @@
 }
 
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
-	// [tableView reloadData];
-	NSLog(@"%@",cellIds[indexPath.row]);
+	
+	filter = cellIds[indexPath.row];
+	target = tableView;
+	[NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
+	
+}
+
+- (void) dictLoad
+{
+	NSLog(@"Filter: %@",filter);
+	[self dictionaeryFilter];
+	self.navigationBarTitle.title = filter;
+	[target reloadData];
+}
+
+- (void) dictionaeryFilter
+{
+	dict = [[NSMutableDictionary alloc] init];
+	dictlist = [[NSMutableArray alloc] init];
+	
+	int i = 0;
+	for ( NSArray *test in node ){
+		if( filter && test[0] != filter ){ continue; }
+		[dict setObject:test[2] forKey: test[0] ];
+		dictlist[i] = test[0];
+		i += 1;
+	}
+	
+	NSLog(@"List %@",dict);
+	
 }
 
 
@@ -153,3 +167,35 @@
 }
 
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//	dictlist = [NSArray arrayWithObjects:
+//				@"xi", @"di", @"bi",
+//				@"ki", @"ti", @"pi",
+//				@"si", @"li", @"vi",
+//
+//				@"xa", @"da", @"ba",
+//				@"ka", @"ta", @"pa",
+//				@"sa", @"la", @"va",
+//
+//				@"xo", @"do", @"bo",
+//				@"ko", @"to", @"po",
+//				@"so", @"lo", @"vo",
+//				nil];
+//
+
+//

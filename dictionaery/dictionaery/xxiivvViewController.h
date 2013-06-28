@@ -18,6 +18,12 @@
 
 NSMutableDictionary *dict;
 
-NSArray *dictlist;
+NSMutableArray *dictlist;
 NSArray *dictPerm;
 NSMutableArray *cellIds;
+NSMutableArray *node;
+NSMutableArray *dictFiltered;
+
+NSString *filter;
+
+UITableView *target;
