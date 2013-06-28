@@ -72,20 +72,16 @@
 }
 
 - (void) dictionaerySequence :(NSDictionary*)sequence
-{
-	
-	NSLog(@"%@",sequence);
-	
+{	
 	int i = 0;
 	for (NSString *test in sequence) {
 		i += 1;
 		NSArray *value = [sequence objectForKey:test];
-		NSLog(@"%@",value[0]);
 		node[i] = [NSArray arrayWithObjects: value[0], value[1], value[2], value[3], value[4], nil];
 	}
 	
-	[self dictLoad];
-	
+	filter = @"";
+	[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
 }
 
 
@@ -132,7 +128,7 @@
 
 - (void) templateStart
 {
-	
+	screen = [[UIScreen mainScreen] bounds];
 }
 
 - (void) templateUpdate
@@ -158,7 +154,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	
+	target = tableView;
 	return [dict count];
 }
 
@@ -212,8 +208,6 @@
 	
 	// Set Filter
 	filter = cellIds[indexPath.row];
-
-	target = tableView;
 	[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
 	
 }
@@ -256,14 +250,14 @@
 
 - (UITableViewCell *) templateCell :(UITableViewCell*) cell :(NSIndexPath*)indexPath
 {
-	UIButton*btnclkd= [UIButton buttonWithType:UIButtonTypeCustom];
-	btnclkd.frame=CGRectMake(200, 5, 70, 25);
-	btnclkd.frame= cell.frame;
-	btnclkd.backgroundColor = [UIColor redColor];
-	[btnclkd setTag:indexPath.row];
-	[btnclkd setTitle:[NSString stringWithFormat:@"row: %@",dictlist[indexPath.row]] forState:UIControlStateNormal] ;
-	[btnclkd addTarget:self action:@selector(btnok:)forControlEvents:UIControlEventTouchUpInside];
-	// [cell.contentView addSubview:btnclkd];
+	CGRect labelFrame = CGRectMake( screen.size.width-110, -1, 100, 30 );
+	UILabel* label = [[UILabel alloc] initWithFrame: labelFrame];
+	[label setText: [NSString stringWithFormat:@"%ld",(long)indexPath.row] ];
+	[label setTextColor: [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.5]];
+	[label setBackgroundColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0]];
+	[label setTextAlignment:NSTextAlignmentRight];
+	[label setFont:	[UIFont fontWithName:@"Helvetica-Bold" size:12]];
+	[cell.contentView addSubview:label];
 	
 	return cell;
 }

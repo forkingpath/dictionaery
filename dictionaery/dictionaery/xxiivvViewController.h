@@ -30,6 +30,7 @@ NSString *filter;
 
 UITableView *target;
 
+CGRect screen;
 
 NSMutableData *receivedData;
 NSMutableData *responseData;
