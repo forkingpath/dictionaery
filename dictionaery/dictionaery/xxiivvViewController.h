@@ -29,3 +29,7 @@ NSMutableArray *dictFiltered;
 NSString *filter;
 
 UITableView *target;
+
+
+NSMutableData *receivedData;
+NSMutableData *responseData;
