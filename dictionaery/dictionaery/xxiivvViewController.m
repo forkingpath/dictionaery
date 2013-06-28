@@ -73,6 +73,7 @@
 
 - (void) dictionaerySequence :(NSDictionary*)sequence
 {
+	
 	NSLog(@"%@",sequence);
 	
 	int i = 0;
@@ -143,7 +144,7 @@
 		self.navigationBarTitle.title = filter;
 	}
 	
-	if( filter ){
+	if( ![filter isEqual:@""] ){
 		self.filterReset.enabled = YES;
 	}
 	else{
@@ -169,22 +170,37 @@
 	if(cell == nil){ cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"MainCell"]; }
 	
 	if( indexPath.row == 0 ){
-		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"MainCell"];
-		cell.textLabel.font = [UIFont systemFontOfSize:14.0];
-		cell.textLabel.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:0];
-		cell.textLabel.text = [cell.textLabel.text uppercaseString];
-		cell.detailTextLabel.font = [UIFont systemFontOfSize:12.0];
-		cell.detailTextLabel.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:0];
-		cell.backgroundView.backgroundColor = [UIColor redColor];
-		UIView *bgView = [[UIView alloc] initWithFrame:cell.frame];
-		bgView.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1];
-		cell.backgroundView = bgView;
+		
+	}
+	// Change cell color
+	
+	cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"MainCell"];
+	cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:18];
+	cell.textLabel.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:0];
+
+	cell.detailTextLabel.font = [UIFont systemFontOfSize:12.0];
+	cell.detailTextLabel.backgroundColor = [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:0];
+	cell.backgroundView.backgroundColor = [UIColor redColor];
+	
+	UIView *bgView = [[UIView alloc] initWithFrame:cell.frame];
+	bgView.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:0.3];
+	cell.backgroundView = bgView;
+	
+	UIView *bgColorView = [[UIView alloc] init];
+	[bgColorView setBackgroundColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1]];
+	[cell setSelectedBackgroundView:bgColorView];
+	
+	
+	cell.textLabel.text = [dictlist[indexPath.row] uppercaseString];
+	cell.detailTextLabel.text = [dict[dictlist[indexPath.row]] capitalizedString];
+	cell = [self templateCell:cell:indexPath];
+	
+	
+	if( [dictlist[indexPath.row] isEqual:filter] ){
+		bgView.backgroundColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1];
+		cell.textLabel.textColor = [UIColor whiteColor];
 	}
 	
-	
-	cell.textLabel.text = dictlist[indexPath.row];
-	cell.detailTextLabel.text = dict[dictlist[indexPath.row]];
-	cell = [self templateCell:cell:indexPath];
 	
 	cellIds[indexPath.row] = dictlist[indexPath.row];
 	
@@ -220,7 +236,12 @@
 		NSString *first = test[0];
 		NSString *second = filter;
 		
-		if ( ![filter isEqual: @""] && [first rangeOfString:second].location == NSNotFound ) {
+		// If is not child
+		if( ![filter isEqual: @""] && [first rangeOfString:second].location == NSNotFound ) {
+			continue;
+		}
+		// If is not root
+		if( [filter isEqual:@""] && [test[0] length] > 2 ){
 			continue;
 		}
 		
