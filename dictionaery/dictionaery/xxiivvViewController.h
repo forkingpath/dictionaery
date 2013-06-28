@@ -14,6 +14,8 @@
 @property (strong, nonatomic) IBOutlet UINavigationItem *navigationBarTitle;
 - (IBAction)filterReset:(id)sender;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *filterReset;
+- (IBAction)dictUpdate:(id)sender;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *dictUpdate;
 
 
 @end

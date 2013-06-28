@@ -26,9 +26,6 @@
 	[self templateStart];
 	[self templateUpdate];
 	[self dictionaeryUpdate];
-	
-	self.navigationBarTitle.title = @"Traumae Dict";
-
 }
 
 
@@ -67,7 +64,8 @@
 
 
 - (void) dictionaeryUpdate
-{	
+{
+	self.navigationBarTitle.title = @"Downloading..";
 	[self apiPull];
 }
 
@@ -195,6 +193,7 @@
 	if( [dictlist[indexPath.row] isEqual:filter] ){
 		bgView.backgroundColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1];
 		cell.textLabel.textColor = [UIColor whiteColor];
+		cell.detailTextLabel.textColor = [UIColor whiteColor];
 	}
 	
 	
@@ -252,7 +251,7 @@
 {
 	CGRect labelFrame = CGRectMake( screen.size.width-110, -1, 100, 30 );
 	UILabel* label = [[UILabel alloc] initWithFrame: labelFrame];
-	[label setText: [NSString stringWithFormat:@"%ld",(long)indexPath.row] ];
+	[label setText: [NSString stringWithFormat:@"%ld",(long)indexPath.row+1] ];
 	[label setTextColor: [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.5]];
 	[label setBackgroundColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0]];
 	[label setTextAlignment:NSTextAlignmentRight];
@@ -274,6 +273,19 @@
 	[self dictLoad];
 	[target reloadData];
 }
+- (IBAction)dictUpdate:(id)sender {
+	self.dictUpdate.enabled = NO;
+	[self dictionaeryUpdate];
+	
+	[NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(updateEnable) userInfo:nil repeats:NO];
+}
+
+
+- (void) updateEnable
+{
+	self.dictUpdate.enabled = YES;
+}
+
 @end
 
 
