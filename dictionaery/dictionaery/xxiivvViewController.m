@@ -132,7 +132,7 @@
 		self.navigationBarTitle.title = @"Dictionaery";
 	}
 	else{
-		self.navigationBarTitle.title = filter;
+		self.navigationBarTitle.title = [filter capitalizedString];
 	}
 	
 	if( ![filter isEqual:@""] ){
@@ -191,6 +191,7 @@
 		bgView.backgroundColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1];
 		cell.textLabel.textColor = [UIColor whiteColor];
 		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.44 green:0.98 blue:0.76 alpha:1];
+		cell.frame = CGRectMake(0, 0, screen.size.width, 300);
 	}
 	
 	
@@ -232,6 +233,11 @@
 		}
 		// If is not root
 		if( [filter isEqual:@""] && [test[0] length] > 2 ){
+			continue;
+		}
+		
+		// If is not direct child
+		if( ![filter isEqual:@""] && [test[0] length] > ( [filter length]+ 2) ){
 			continue;
 		}
 		
