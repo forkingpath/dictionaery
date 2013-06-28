@@ -45,10 +45,10 @@
 		node[myCount] = [NSArray arrayWithObjects: @"0", @"0", @"0", @"0", @"silence", nil];
 	}
 	
+	node[0]		= [NSArray arrayWithObjects: @"Welcome", @"Notes", @"Beta", @"Something else", @"3rd", nil];
 	
-	node[0]		= [NSArray arrayWithObjects: @"xi", @"Notes", @"psychology", @"Something else", @"3rd", nil];
-	node[1]		= [NSArray arrayWithObjects: @"di", @"Notes", @"physionomy", @"Something else", @"3rd", nil];
-	node[2]		= [NSArray arrayWithObjects: @"xidi", @"Notes", @"something else", @"Something else", @"3rd", nil];
+	
+	
 	
 	[self dictionaeryFilter];
 	
@@ -67,19 +67,25 @@
 
 
 - (void) dictionaeryUpdate
-{
-
-	NSData *data = [NSData dataWithContentsOfURL: [NSURL URLWithString:@"http://api.xxiivv.com/?key=traumae&cmd=read"]];
-	NSError *error;
-	NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-	NSArray *response = [json objectForKey:@"resultMessage"];
-	NSLog(@"response %@",response);
-
-	
+{	
 	[self apiPull];
 }
 
-
+- (void) dictionaerySequence :(NSDictionary*)sequence
+{
+	NSLog(@"%@",sequence);
+	
+	int i = 0;
+	for (NSString *test in sequence) {
+		i += 1;
+		NSArray *value = [sequence objectForKey:test];
+		NSLog(@"%@",value[0]);
+		node[i] = [NSArray arrayWithObjects: value[0], value[1], value[2], value[3], value[4], nil];
+	}
+	
+	[self dictLoad];
+	
+}
 
 
 
@@ -116,18 +122,9 @@
 	NSString *response = [[NSString alloc] initWithData:responseData encoding: NSASCIIStringEncoding];
 	NSError *error;
 	NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: [response dataUsingEncoding:NSUTF8StringEncoding] options: NSJSONReadingMutableContainers error: &error];
-	NSLog(@"%@",JSON);	
+	
+	[self dictionaerySequence:JSON];
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -200,8 +197,6 @@
 	// Set Filter
 	filter = cellIds[indexPath.row];
 
-	
-	
 	target = tableView;
 	[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
 	
@@ -229,11 +224,10 @@
 			continue;
 		}
 		
-		[dict setObject:test[2] forKey: test[0] ];
+		[dict setObject:test[1] forKey: test[0] ];
 		dictlist[i] = test[0];
 		i += 1;
 	}
-	
 }
 
 
