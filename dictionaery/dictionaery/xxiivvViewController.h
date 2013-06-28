@@ -9,5 +9,15 @@
 #import <UIKit/UIKit.h>
 
 @interface xxiivvViewController : UIViewController
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet UINavigationBar *navigationBar;
+@property (strong, nonatomic) IBOutlet UINavigationItem *navigationBarTitle;
+
 
 @end
+
+NSMutableDictionary *dict;
+
+NSArray *dictlist;
+NSArray *dictPerm;
+NSMutableArray *cellIds;
