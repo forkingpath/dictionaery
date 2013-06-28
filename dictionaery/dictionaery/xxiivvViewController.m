@@ -23,7 +23,8 @@
 - (void) start
 {
 	[self dictionaeryStart];
-
+	[self templateStart];
+	[self templateUpdate];
 	self.navigationBarTitle.title = @"Traumae Dict";
 
 }
@@ -31,7 +32,12 @@
 
 - (void) dictionaeryStart
 {
+	filter = @"";
+	
+	
+	
 	// Node is API return, array of all translations
+	
 	
 	node = [NSMutableArray arrayWithObjects:@"",nil];
 	
@@ -49,8 +55,6 @@
 	// Populate dictionary with all translations
 	
 	[self dictionaeryFilter];
-	
-	NSLog(@"%@",dict);
 //
 //	[dict setObject:@"Psychology" forKey:@"xi"];
 //	
@@ -73,7 +77,23 @@
 		myCount++;
 		cellIds[myCount] = @"unnamed";
 	}	
+		
+}
+
+
+- (void) templateStart
+{
 	
+}
+
+- (void) templateUpdate
+{
+	if( filter ){
+		self.filterReset.enabled = YES;
+	}
+	else{
+		self.filterReset.enabled = NO;
+	}
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *) tableView
@@ -112,15 +132,20 @@
 
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
 	
+	// Set Filter
 	filter = cellIds[indexPath.row];
+
+	
+	
 	target = tableView;
-	[NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
+	[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
 	
 }
 
 - (void) dictLoad
 {
 	NSLog(@"Filter: %@",filter);
+	[self templateUpdate];
 	[self dictionaeryFilter];
 	self.navigationBarTitle.title = filter;
 	[target reloadData];
@@ -133,13 +158,17 @@
 	
 	int i = 0;
 	for ( NSArray *test in node ){
-		if( filter && test[0] != filter ){ continue; }
+		NSString *first = test[0];
+		NSString *second = filter;
+		
+		if ( ![filter isEqual: @""] && [first rangeOfString:second].location == NSNotFound ) {
+			continue;
+		}
+		
 		[dict setObject:test[2] forKey: test[0] ];
 		dictlist[i] = test[0];
 		i += 1;
 	}
-	
-	NSLog(@"List %@",dict);
 	
 }
 
@@ -166,6 +195,12 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)filterReset:(id)sender {
+	NSLog(@"reset");
+	filter = @"";
+	[self dictLoad];
+	[target reloadData];
+}
 @end
 
 

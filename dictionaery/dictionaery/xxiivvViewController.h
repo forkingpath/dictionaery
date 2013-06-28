@@ -12,6 +12,8 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (strong, nonatomic) IBOutlet UINavigationItem *navigationBarTitle;
+- (IBAction)filterReset:(id)sender;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *filterReset;
 
 
 @end
