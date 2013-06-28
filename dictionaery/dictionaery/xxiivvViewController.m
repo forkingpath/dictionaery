@@ -39,13 +39,10 @@
 	while ( myCount < 90 )
 	{
 		myCount++;
-		node[myCount] = [NSArray arrayWithObjects: @"0", @"0", @"0", @"0", @"silence", nil];
+		node[myCount] = [NSArray arrayWithObjects: @"0", @"Connecting..", @"The dictionary needs to be downloaded", @"0", @"silence", nil];
 	}
 	
 	node[0]		= [NSArray arrayWithObjects: @"Welcome", @"Notes", @"Beta", @"Something else", @"3rd", nil];
-	
-	
-	
 	
 	[self dictionaeryFilter];
 	
@@ -193,7 +190,7 @@
 	if( [dictlist[indexPath.row] isEqual:filter] ){
 		bgView.backgroundColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1];
 		cell.textLabel.textColor = [UIColor whiteColor];
-		cell.detailTextLabel.textColor = [UIColor whiteColor];
+		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.44 green:0.98 blue:0.76 alpha:1];
 	}
 	
 	
@@ -289,33 +286,3 @@
 @end
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//	dictlist = [NSArray arrayWithObjects:
-//				@"xi", @"di", @"bi",
-//				@"ki", @"ti", @"pi",
-//				@"si", @"li", @"vi",
-//
-//				@"xa", @"da", @"ba",
-//				@"ka", @"ta", @"pa",
-//				@"sa", @"la", @"va",
-//
-//				@"xo", @"do", @"bo",
-//				@"ko", @"to", @"po",
-//				@"so", @"lo", @"vo",
-//				nil];
-//
-
-//

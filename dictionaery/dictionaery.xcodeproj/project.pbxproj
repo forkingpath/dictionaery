@@ -87,8 +87,8 @@
 				03452FC8177D08C400B2FAD7 /* xxiivvAppDelegate.m */,
 				03452FD0177D08C400B2FAD7 /* xxiivvViewController.h */,
 				03452FD1177D08C400B2FAD7 /* xxiivvViewController.m */,
-				03452FD3177D08C400B2FAD7 /* xxiivvViewController.xib */,
 				03452FBF177D08C400B2FAD7 /* Supporting Files */,
+				03452FD3177D08C400B2FAD7 /* xxiivvViewController.xib */,
 			);
 			path = dictionaery;
 			sourceTree = "<group>";
