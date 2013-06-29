@@ -178,8 +178,10 @@
 	cell.backgroundView = bgView;
 	
 	UIView *bgColorView = [[UIView alloc] init];
-	[bgColorView setBackgroundColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1]];
+	[bgColorView setBackgroundColor:[UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1]];
 	[cell setSelectedBackgroundView:bgColorView];
+	cell.textLabel.highlightedTextColor = [UIColor blackColor];
+	
 	
 	
 	cell.textLabel.text = [dictlist[indexPath.row] uppercaseString];
@@ -188,9 +190,9 @@
 	
 	
 	if( [dictlist[indexPath.row] isEqual:filter] ){
-		bgView.backgroundColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1];
+		bgView.backgroundColor = [UIColor colorWithRed:0.44 green:0.98 blue:0.76 alpha:1];
 		cell.textLabel.textColor = [UIColor whiteColor];
-		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.44 green:0.98 blue:0.76 alpha:1];
+		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1];
 		cell.frame = CGRectMake(0, 0, screen.size.width, 300);
 	}
 	
@@ -256,7 +258,7 @@
 	UILabel* label = [[UILabel alloc] initWithFrame: labelFrame];
 	[label setText: [NSString stringWithFormat:@"%ld",(long)indexPath.row+1] ];
 	[label setTextColor: [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.5]];
-	[label setBackgroundColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0]];
+	[label setBackgroundColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1]];
 	[label setTextAlignment:NSTextAlignmentRight];
 	[label setFont:	[UIFont fontWithName:@"Helvetica-Bold" size:12]];
 	[cell.contentView addSubview:label];
