@@ -203,6 +203,15 @@
 	
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if( [dictlist[indexPath.row] isEqual:filter] ){
+		return 100;
+	}
+    return 48;
+}
+
+
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
 	
 	// Set Filter
@@ -257,8 +266,8 @@
 	CGRect labelFrame = CGRectMake( screen.size.width-110, -1, 100, 30 );
 	UILabel* label = [[UILabel alloc] initWithFrame: labelFrame];
 	[label setText: [NSString stringWithFormat:@"%ld",(long)indexPath.row+1] ];
-	[label setTextColor: [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.5]];
-	[label setBackgroundColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1]];
+	[label setTextColor: [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5]];
+	[label setBackgroundColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0]];
 	[label setTextAlignment:NSTextAlignmentRight];
 	[label setFont:	[UIFont fontWithName:@"Helvetica-Bold" size:12]];
 	[cell.contentView addSubview:label];
