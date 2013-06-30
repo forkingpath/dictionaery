@@ -26,7 +26,6 @@
 	[self templateStart];
 	[self templateUpdate];
 	[self dictionaeryUpdate];
-	[self listDisplay];
 }
 
 
@@ -75,6 +74,8 @@
 		NSArray *value = [sequence objectForKey:test];
 		node[i] = [NSArray arrayWithObjects: value[0], value[1], value[2], value[3], value[4], nil];
 	}
+	
+	node[[node count]] = [NSArray arrayWithObjects: @"support", @"Visit online application support", @"Ressource", @"", @"", nil];
 	
 	filter = @"";
 	[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
@@ -125,7 +126,7 @@
 - (void) templateStart
 {
 	screen = [[UIScreen mainScreen] bounds];
-	[[UITabBar appearance] setSelectedImageTintColor:[UIColor colorWithRed:0.44 green:0.98 blue:0.76 alpha:1]];
+	[[UITabBar appearance] setSelectedImageTintColor:[UIColor colorWithRed:0.3 green:0.3 blue:0.3 alpha:1]];
 }
 
 - (void) templateUpdate
@@ -174,6 +175,8 @@
 
 	cell.detailTextLabel.font = [UIFont systemFontOfSize:12.0];
 	cell.detailTextLabel.backgroundColor = [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:0];
+	cell.detailTextLabel.highlightedTextColor = [UIColor blackColor];
+	
 	cell.backgroundView.backgroundColor = [UIColor redColor];
 	
 	UIView *bgView = [[UIView alloc] initWithFrame:cell.frame];
@@ -181,11 +184,9 @@
 	cell.backgroundView = bgView;
 	
 	UIView *bgColorView = [[UIView alloc] init];
-	[bgColorView setBackgroundColor:[UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1]];
+	[bgColorView setBackgroundColor:[UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:0.2]];
 	[cell setSelectedBackgroundView:bgColorView];
 	cell.textLabel.highlightedTextColor = [UIColor blackColor];
-	
-	
 	
 	cell.textLabel.text = [dictlist[indexPath.row] uppercaseString];
 	cell.detailTextLabel.text = [dict[dictlist[indexPath.row]] capitalizedString];
@@ -194,8 +195,8 @@
 	
 	if( [dictlist[indexPath.row] isEqual:filter] ){
 		bgView.backgroundColor = [UIColor colorWithRed:0.44 green:0.98 blue:0.76 alpha:1];
-		cell.textLabel.textColor = [UIColor whiteColor];
-		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1];
+		cell.textLabel.textColor = [UIColor blackColor];
+		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0.5];
 		cell.frame = CGRectMake(0, 0, screen.size.width, 300);
 	}
 	if( [dicttype[indexPath.row] isEqual:@"core"] ){
@@ -220,6 +221,10 @@
 
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
 	
+	if( [cellIds[indexPath.row] isEqual:@"support"] ){
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Dictionaery+support"]];
+		return;
+	}
 	
 	[self.searchBar resignFirstResponder];
 	
@@ -232,7 +237,6 @@
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
 	filter = searchText;
-	[self listDisplay];
 	[self dictLoad];
 }
 
@@ -285,25 +289,17 @@
 {
     if(item.tag == 1)
     {
-        [self listDisplay];
+		[self.searchBar resignFirstResponder];
+		NSLog(@"reset");
+		filter = @"";
+		[self dictLoad];
+		[target reloadData];
     }
 	if(item.tag == 2)
     {
-		[self listHide];
+		filter = @"support";
+		[self dictLoad];
     }
-}
-
-
-- (void) listDisplay
-{
-	[self fadeOut:self.applicationSupport d:0 t:1.0];
-	[self fadeOut:self.applicationSupportBtn d:0 t:0.5];
-}
-
-- (void) listHide
-{
-	[self fadeIn:self.applicationSupport d:0 t:0.5];
-	[self fadeIn:self.applicationSupportBtn d:0 t:1.0];
 }
 
 
@@ -333,7 +329,6 @@
 	NSLog(@"reset");
 	filter = @"";
 	[self dictLoad];
-	[self listDisplay];
 	[target reloadData];
 }
 - (IBAction)dictUpdate:(id)sender {
@@ -368,10 +363,10 @@
 	[UIView commitAnimations];
 }
 
-
-- (IBAction)applicationSupportBtn:(id)sender {
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Dictionaery+support"]];
-}
+//
+//- (IBAction)applicationSupportBtn:(id)sender {
+//	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Dictionaery+support"]];
+//}
 @end
 
 
