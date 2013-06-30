@@ -26,6 +26,7 @@
 	[self templateStart];
 	[self templateUpdate];
 	[self dictionaeryUpdate];
+	[self listDisplay];
 }
 
 
@@ -166,6 +167,7 @@
 	// Change cell color
 	
 	cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"MainCell"];
+	
 	cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:18];
 	cell.textLabel.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:0];
 
@@ -194,6 +196,9 @@
 		cell.textLabel.textColor = [UIColor whiteColor];
 		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1];
 		cell.frame = CGRectMake(0, 0, screen.size.width, 300);
+	}
+	if( [dicttype[indexPath.row] isEqual:@"core"] ){
+		cell.detailTextLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:1];
 	}
 	
 	
@@ -238,12 +243,14 @@
 	[self templateUpdate];
 	[self dictionaeryFilter];
 	[target reloadData];
+	[self.tableView setContentOffset:CGPointZero animated:YES];
 }
 
 - (void) dictionaeryFilter
 {
 	dict = [[NSMutableDictionary alloc] init];
 	dictlist = [[NSMutableArray alloc] init];
+	dicttype = [[NSMutableArray alloc] init];
 	
 	int i = 0;
 	for ( NSArray *test in node ){
@@ -266,18 +273,42 @@
 		
 		[dict setObject:test[1] forKey: test[0] ];
 		dictlist[i] = test[0];
+		dicttype[i] = test[2];
 		i += 1;
 	}
 }
 
+- (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
+{
+    if(item.tag == 1)
+    {
+        [self listDisplay];
+    }
+	if(item.tag == 2)
+    {
+		[self listHide];
+    }
+}
 
+
+- (void) listDisplay
+{
+	[self fadeOut:self.applicationSupport d:0 t:1.0];
+	[self fadeOut:self.applicationSupportBtn d:0 t:0.5];
+}
+
+- (void) listHide
+{
+	[self fadeIn:self.applicationSupport d:0 t:0.5];
+	[self fadeIn:self.applicationSupportBtn d:0 t:1.0];
+}
 
 
 - (UITableViewCell *) templateCell :(UITableViewCell*) cell :(NSIndexPath*)indexPath
 {
 	CGRect labelFrame = CGRectMake( screen.size.width-110, -1, 100, 30 );
 	UILabel* label = [[UILabel alloc] initWithFrame: labelFrame];
-	[label setText: [NSString stringWithFormat:@"%ld",(long)indexPath.row+1] ];
+	[label setText: [NSString stringWithFormat:@"%@",dicttype[indexPath.row]] ];
 	[label setTextColor: [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5]];
 	[label setBackgroundColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0]];
 	[label setTextAlignment:NSTextAlignmentRight];
@@ -314,6 +345,29 @@
 	self.dictUpdate.enabled = YES;
 }
 
+
+- (void)fadeIn:(UIView*)viewToFadeIn d:(NSTimeInterval)delay t:(NSTimeInterval)duration
+{
+	[UIView beginAnimations: @"Fade In" context:nil];
+	[UIView setAnimationDuration:duration];
+	[UIView setAnimationDelay:delay];
+	viewToFadeIn.alpha = 1;
+	[UIView commitAnimations];
+}
+
+- (void)fadeOut:(UIView*)viewToFadeIn d:(NSTimeInterval)delay t:(NSTimeInterval)duration
+{
+	[UIView beginAnimations: @"Fade Out" context:nil];
+	[UIView setAnimationDuration:duration];
+	[UIView setAnimationDelay:delay];
+	viewToFadeIn.alpha = 0;
+	[UIView commitAnimations];
+}
+
+
+- (IBAction)applicationSupportBtn:(id)sender {
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Dictionaery+support"]];
+}
 @end
 
 

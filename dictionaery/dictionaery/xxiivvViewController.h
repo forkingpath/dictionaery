@@ -18,11 +18,14 @@
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *dictUpdate;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 
+@property (strong, nonatomic) IBOutlet UIImageView *applicationSupport;
+@property (strong, nonatomic) IBOutlet UIButton *applicationSupportBtn;
+- (IBAction)applicationSupportBtn:(id)sender;
 
 @end
 
 NSMutableDictionary *dict;
-
+NSMutableArray *dicttype;
 NSMutableArray *dictlist;
 NSArray *dictPerm;
 NSMutableArray *cellIds;
