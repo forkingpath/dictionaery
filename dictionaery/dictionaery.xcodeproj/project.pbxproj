@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		031003CC178070EF00656717 /* icon.list.png in Resources */ = {isa = PBXBuildFile; fileRef = 031003CA178070EF00656717 /* icon.list.png */; };
+		031003CD178070EF00656717 /* icon.support.png in Resources */ = {isa = PBXBuildFile; fileRef = 031003CB178070EF00656717 /* icon.support.png */; };
+		031003CF1780760200656717 /* icon.crest.png in Resources */ = {isa = PBXBuildFile; fileRef = 031003CE1780760200656717 /* icon.crest.png */; };
 		03452FB9177D08C400B2FAD7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03452FB8177D08C400B2FAD7 /* UIKit.framework */; };
 		03452FBB177D08C400B2FAD7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03452FBA177D08C400B2FAD7 /* Foundation.framework */; };
 		03452FBD177D08C400B2FAD7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03452FBC177D08C400B2FAD7 /* CoreGraphics.framework */; };
@@ -29,6 +32,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		031003CA178070EF00656717 /* icon.list.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.list.png; sourceTree = "<group>"; };
+		031003CB178070EF00656717 /* icon.support.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.support.png; sourceTree = "<group>"; };
+		031003CE1780760200656717 /* icon.crest.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.crest.png; sourceTree = "<group>"; };
 		03452FB5177D08C400B2FAD7 /* dictionaery.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dictionaery.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03452FB8177D08C400B2FAD7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		03452FBA177D08C400B2FAD7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -103,6 +109,9 @@
 		03452FBE177D08C400B2FAD7 /* dictionaery */ = {
 			isa = PBXGroup;
 			children = (
+				031003CE1780760200656717 /* icon.crest.png */,
+				031003CA178070EF00656717 /* icon.list.png */,
+				031003CB178070EF00656717 /* icon.support.png */,
 				03452FC7177D08C400B2FAD7 /* xxiivvAppDelegate.h */,
 				03452FC8177D08C400B2FAD7 /* xxiivvAppDelegate.m */,
 				03452FD0177D08C400B2FAD7 /* xxiivvViewController.h */,
@@ -196,6 +205,9 @@
 				037D57BA177D864400BCD1F1 /* icon.114.png in Resources */,
 				037D57BC177D864800BCD1F1 /* icon.72.png in Resources */,
 				037D57BE177D864A00BCD1F1 /* icon.144.png in Resources */,
+				031003CC178070EF00656717 /* icon.list.png in Resources */,
+				031003CD178070EF00656717 /* icon.support.png in Resources */,
+				031003CF1780760200656717 /* icon.crest.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

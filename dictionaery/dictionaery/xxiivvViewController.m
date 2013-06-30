@@ -125,6 +125,7 @@
 - (void) templateStart
 {
 	screen = [[UIScreen mainScreen] bounds];
+	[[UITabBar appearance] setSelectedImageTintColor:[UIColor colorWithRed:0.44 green:0.98 blue:0.76 alpha:1]];
 }
 
 - (void) templateUpdate
@@ -231,6 +232,7 @@
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
 	filter = searchText;
+	[self listDisplay];
 	[self dictLoad];
 }
 
@@ -277,6 +279,7 @@
 		i += 1;
 	}
 }
+
 
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
@@ -330,6 +333,7 @@
 	NSLog(@"reset");
 	filter = @"";
 	[self dictLoad];
+	[self listDisplay];
 	[target reloadData];
 }
 - (IBAction)dictUpdate:(id)sender {
