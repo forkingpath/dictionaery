@@ -16,6 +16,7 @@
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *filterReset;
 - (IBAction)dictUpdate:(id)sender;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *dictUpdate;
+@property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 
 
 @end

@@ -214,11 +214,23 @@
 
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
 	
+	
+	[self.searchBar resignFirstResponder];
+	
 	// Set Filter
 	filter = cellIds[indexPath.row];
 	[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
 	
 }
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+	filter = searchText;
+	[self dictLoad];
+}
+
+
+
 
 - (void) dictLoad
 {
@@ -281,7 +293,9 @@
     // Dispose of any resources that can be recreated.
 }
 
+
 - (IBAction)filterReset:(id)sender {
+	[self.searchBar resignFirstResponder];
 	NSLog(@"reset");
 	filter = @"";
 	[self dictLoad];
