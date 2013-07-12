@@ -191,10 +191,13 @@
 	
 	
 	if( [dictlist[indexPath.row] isEqual:filter] ){
-		bgView.backgroundColor = [UIColor colorWithRed:0.44 green:0.98 blue:0.76 alpha:1];
+		bgView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
 		cell.textLabel.textColor = [UIColor blackColor];
 		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0.5];
 		cell.frame = CGRectMake(0, 0, screen.size.width, 300);
+		cell.textLabel.font = [UIFont fontWithName:@"Septambres Fune" size:40];
+		cell.textLabel.text = [self toQwerty:[dictlist[indexPath.row] lowercaseString]];
+		
 	}
 	if( [dicttype[indexPath.row] isEqual:@"core"] ){
 		cell.detailTextLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:1];
@@ -374,6 +377,50 @@
 	
 	[NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(updateEnable) userInfo:nil repeats:NO];
 }
+
+
+- (NSString*) toQwerty :(NSString*)traumae
+{
+	NSString *fixed = traumae;
+	
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"xi" withString:@"W"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"di" withString:@"w"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"bi" withString:@"t"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"xa" withString:@"S"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"da" withString:@"s"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ba" withString:@"g"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"xo" withString:@"X"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"do" withString:@"x"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"bo" withString:@"b"];
+	
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ki" withString:@"E"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ti" withString:@"e"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"pi" withString:@"y"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ka" withString:@"D"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ta" withString:@"d"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"pa" withString:@"h"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ko" withString:@"C"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"to" withString:@"c"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"po" withString:@"n"];
+	
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"si" withString:@"Q"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"li" withString:@"q"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"vi" withString:@"r"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"sa" withString:@"A"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"la" withString:@"a"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"va" withString:@"f"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"so" withString:@"Z"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"lo" withString:@"z"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"vo" withString:@"v"];
+
+	return fixed;
+	
+}
+
+
+
+
+
 
 
 - (void) updateEnable
