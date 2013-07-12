@@ -197,6 +197,7 @@
 		cell.frame = CGRectMake(0, 0, screen.size.width, 300);
 		cell.textLabel.font = [UIFont fontWithName:@"Septambres Fune" size:40];
 		cell.textLabel.text = [self toQwerty:[dictlist[indexPath.row] lowercaseString]];
+		cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ : %@",[dictlist[indexPath.row] lowercaseString],[dict[dictlist[indexPath.row]] capitalizedString]];
 		
 	}
 	if( [dicttype[indexPath.row] isEqual:@"core"] ){
@@ -266,7 +267,6 @@
 	// Search Query
 	
 	if( ![filter isEqual: @""] ){
-		[dict setObject:@"test" forKey: filter ];
 		dictlist[0] = filter;
 		dicttype[0] = @"Search Query";
 		i += 1;
@@ -297,9 +297,9 @@
 		}
 		// If is not filter
 		else if( [filter isEqual:traumaeWord] ){
+			[dict setObject:test[1] forKey: test[0] ];
 			continue;
 		}
-		
 		
 		[dict setObject:test[1] forKey: test[0] ];
 		dictlist[i] = test[0];
@@ -307,21 +307,20 @@
 		i += 1;
 	}
 	
+	// First
+	if( ![filter isEqual: @""] ){
+		dictlist[0] = filter;
+		dicttype[0] = @"Search Query";
+		i += 1;
+	}
+	
+	// Last
 	if( ![filter isEqual: @""] && i == 1 ){
 		[dict setObject:@"Start a new search query" forKey: @"End" ];
 		dictlist[i] = @"End of tree";
 		dicttype[i] = @"end";
 	}
 	
-	
-	
-	// Siblings
-	
-
-	
-	
-	
-
 }
 
 
@@ -447,10 +446,6 @@
 	[UIView commitAnimations];
 }
 
-//
-//- (IBAction)applicationSupportBtn:(id)sender {
-//	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Dictionaery+support"]];
-//}
 @end
 
 
