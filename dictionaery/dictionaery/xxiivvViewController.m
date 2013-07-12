@@ -75,7 +75,10 @@
 		node[i] = [NSArray arrayWithObjects: value[0], value[1], value[2], value[3], value[4], nil];
 	}
 	
-	node[[node count]] = [NSArray arrayWithObjects: @"support", @"Visit online application support", @"Ressource", @"", @"", nil];
+	
+	node[[node count]]	= [NSArray arrayWithObjects: @"support1", @"Application Support", @"ressource", @"", @"", nil];
+	node[[node count]]	= [NSArray arrayWithObjects: @"support2", @"Traumae Documentation", @"ressource", @"", @"", nil];
+	node[[node count]]	= [NSArray arrayWithObjects: @"support3", @"Traumae Lessons", @"ressource", @"", @"", nil];
 	
 	filter = @"";
 	[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
@@ -190,7 +193,7 @@
 	cell = [self templateCell:cell:indexPath];
 	
 	
-	if( [dictlist[indexPath.row] isEqual:filter] ){
+	if( [dictlist[indexPath.row] isEqual:filter] && ![dictlist[indexPath.row] isEqual:@"support"] ){
 		bgView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
 		cell.textLabel.textColor = [UIColor blackColor];
 		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0.5];
@@ -207,6 +210,20 @@
 		cell.textLabel.textColor = [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1];
 		cell.detailTextLabel.alpha = 0;
 	}
+	if( [dicttype[indexPath.row] isEqual:@"ressource"] ){
+		cell.textLabel.text = dict[dictlist[indexPath.row]];
+		cell.detailTextLabel.text = @"";
+	}
+	
+	if( [dictlist[indexPath.row] isEqual:@"support"] ){
+		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0.5];
+		cell.frame = CGRectMake(0, 0, screen.size.width, 300);
+		cell.textLabel.text = @"Support";
+		cell.detailTextLabel.text = @"Visit the application support";		
+	}
+	
+	
+	NSLog(@"TYPE %@",dicttype[indexPath.row]);
 	
 	cellIds[indexPath.row] = dictlist[indexPath.row];
 	
@@ -225,8 +242,16 @@
 
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
 	
-	if( [cellIds[indexPath.row] isEqual:@"support"] ){
+	if( [dictlist[indexPath.row] isEqual:@"support1"] ){
 		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Dictionaery+support"]];
+		return;
+	}
+	if( [dictlist[indexPath.row] isEqual:@"support2"] ){
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Traumae"]];
+		return;
+	}
+	if( [dictlist[indexPath.row] isEqual:@"support3"] ){
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Traumae+lessons"]];
 		return;
 	}
 	
@@ -266,7 +291,7 @@
 	
 	// Search Query
 	
-	if( ![filter isEqual: @""] ){
+	if( ![filter isEqual: @""] && ![filter isEqual: @"support"]){
 		dictlist[0] = filter;
 		dicttype[0] = @"Search Query";
 		i += 1;
@@ -346,7 +371,9 @@
 {
 	CGRect labelFrame = CGRectMake( screen.size.width-110, -1, 100, 30 );
 	UILabel* label = [[UILabel alloc] initWithFrame: labelFrame];
-	[label setText: [NSString stringWithFormat:@"%@",dicttype[indexPath.row]] ];
+	if( ![[NSString stringWithFormat:@"%@",dicttype[indexPath.row]] isEqual:@"ressource"] ){
+		[label setText: [NSString stringWithFormat:@"%@",dicttype[indexPath.row]] ];
+	}
 	[label setTextColor: [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5]];
 	[label setBackgroundColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0]];
 	[label setTextAlignment:NSTextAlignmentRight];
