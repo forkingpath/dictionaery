@@ -259,6 +259,7 @@
 	dicttype = [[NSMutableArray alloc] init];
 	
 	int i = 0;
+	
 	for ( NSArray *test in node ){
 		NSString *first = test[0];
 		NSString *second = filter;
@@ -277,11 +278,23 @@
 			continue;
 		}
 		
+		// If is not filter
+		if( [filter isEqual:first] ){
+			continue;
+		}
+		
 		[dict setObject:test[1] forKey: test[0] ];
 		dictlist[i] = test[0];
 		dicttype[i] = test[2];
 		i += 1;
 	}
+
+	
+	if( ![filter isEqual: @""] ){
+		dictlist[0] = filter;
+	}
+	
+
 }
 
 

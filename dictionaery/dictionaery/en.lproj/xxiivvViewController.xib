@@ -48,7 +48,6 @@
 						<string key="NSFrame">{{0, 88}, {320, 411}}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">3</int>
@@ -73,11 +72,10 @@
 						<string key="NSFrameSize">{320, 44}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 						<int key="IBUIBarStyle">1</int>
-						<array key="IBUIItems">
+						<array class="NSMutableArray" key="IBUIItems">
 							<object class="IBUINavigationItem" id="521780696">
 								<reference key="IBUINavigationBar" ref="865249390"/>
 								<string key="IBUITitle">Translate</string>
@@ -108,7 +106,6 @@
 						<string key="NSFrame">{{0, 499}, {320, 49}}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">3</int>
@@ -339,27 +336,6 @@
 						<reference key="parent" ref="774585933"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">45</int>
-						<reference key="object" ref="521780696"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="830981209"/>
-							<reference ref="615798311"/>
-						</array>
-						<reference key="parent" ref="865249390"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">64</int>
-						<reference key="object" ref="615798311"/>
-						<reference key="parent" ref="521780696"/>
-						<string key="objectName">Update</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">58</int>
-						<reference key="object" ref="830981209"/>
-						<reference key="parent" ref="521780696"/>
-						<string key="objectName">Reset</string>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">67</int>
 						<reference key="object" ref="827733740"/>
 						<array class="NSMutableArray" key="children">
@@ -385,6 +361,27 @@
 						<reference key="object" ref="624897191"/>
 						<reference key="parent" ref="774585933"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">45</int>
+						<reference key="object" ref="521780696"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="830981209"/>
+							<reference ref="615798311"/>
+						</array>
+						<reference key="parent" ref="865249390"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">64</int>
+						<reference key="object" ref="615798311"/>
+						<reference key="parent" ref="521780696"/>
+						<string key="objectName">Update</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">58</int>
+						<reference key="object" ref="830981209"/>
+						<reference key="parent" ref="521780696"/>
+						<string key="objectName">Reset</string>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -407,7 +404,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">80</int>
+			<int key="maxID">82</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -415,15 +412,10 @@
 					<string key="className">xxiivvViewController</string>
 					<string key="superclassName">UIViewController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="applicationSupportBtn:">id</string>
 						<string key="dictUpdate:">id</string>
 						<string key="filterReset:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="applicationSupportBtn:">
-							<string key="name">applicationSupportBtn:</string>
-							<string key="candidateClassName">id</string>
-						</object>
 						<object class="IBActionInfo" key="dictUpdate:">
 							<string key="name">dictUpdate:</string>
 							<string key="candidateClassName">id</string>
@@ -434,8 +426,6 @@
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="applicationSupport">UIImageView</string>
-						<string key="applicationSupportBtn">UIButton</string>
 						<string key="dictUpdate">UIBarButtonItem</string>
 						<string key="filterReset">UIBarButtonItem</string>
 						<string key="navigationBar">UINavigationBar</string>
@@ -444,14 +434,6 @@
 						<string key="tableView">UITableView</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="applicationSupport">
-							<string key="name">applicationSupport</string>
-							<string key="candidateClassName">UIImageView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="applicationSupportBtn">
-							<string key="name">applicationSupportBtn</string>
-							<string key="candidateClassName">UIButton</string>
-						</object>
 						<object class="IBToOneOutletInfo" key="dictUpdate">
 							<string key="name">dictUpdate</string>
 							<string key="candidateClassName">UIBarButtonItem</string>
