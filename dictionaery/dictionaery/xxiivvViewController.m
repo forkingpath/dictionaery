@@ -163,9 +163,6 @@
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MainCell"];
 	if(cell == nil){ cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"MainCell"]; }
 	
-	if( indexPath.row == 0 ){
-		
-	}
 	// Change cell color
 	
 	cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"MainCell"];
@@ -202,7 +199,10 @@
 	if( [dicttype[indexPath.row] isEqual:@"core"] ){
 		cell.detailTextLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:1];
 	}
-	
+	if( [dicttype[indexPath.row] isEqual:@"end"] ){
+		cell.textLabel.textColor = [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1];
+		cell.detailTextLabel.alpha = 0;
+	}
 	
 	cellIds[indexPath.row] = dictlist[indexPath.row];
 	
@@ -260,39 +260,63 @@
 	
 	int i = 0;
 	
+	// Search Query
+	
+	if( ![filter isEqual: @""] ){
+		[dict setObject:@"test" forKey: filter ];
+		dictlist[0] = filter;
+		dicttype[0] = @"Search Query";
+		i += 1;
+	}
+	
+	// Direct Children
+	
 	for ( NSArray *test in node ){
-		NSString *first = test[0];
+		NSString *traumaeWord = test[0];
 		NSString *second = filter;
 		
 		// If is not child
-		if( ![filter isEqual: @""] && [first rangeOfString:second].location == NSNotFound ) {
+		if( ![filter isEqual: @""] && [traumaeWord rangeOfString:second].location == NSNotFound ) {
 			continue;
 		}
 		// If is not root
-		if( [filter isEqual:@""] && [test[0] length] > 2 ){
+		else if( [filter isEqual:@""] && [test[0] length] > 2 ){
 			continue;
 		}
-		
 		// If is not direct child
-		if( ![filter isEqual:@""] && [test[0] length] > ( [filter length]+ 2) ){
+		else if( ![filter isEqual:@""] && [test[0] length] > ( [filter length]+ 2) ){
+			continue;
+		}
+		// If doesn't start with filter
+		else if( ![filter isEqual: @""] && ![[traumaeWord substringWithRange:NSMakeRange(0, [filter length])] isEqual:filter] ){
+			NSLog(@"%@", [traumaeWord substringWithRange:NSMakeRange(0, [filter length])] );
+			continue;
+		}
+		// If is not filter
+		else if( [filter isEqual:traumaeWord] ){
 			continue;
 		}
 		
-		// If is not filter
-		if( [filter isEqual:first] ){
-			continue;
-		}
 		
 		[dict setObject:test[1] forKey: test[0] ];
 		dictlist[i] = test[0];
 		dicttype[i] = test[2];
 		i += 1;
 	}
+	
+	if( ![filter isEqual: @""] && i == 1 ){
+		[dict setObject:@"Start a new search query" forKey: @"End" ];
+		dictlist[i] = @"End of tree";
+		dicttype[i] = @"end";
+	}
+	
+	
+	
+	// Siblings
+	
 
 	
-	if( ![filter isEqual: @""] ){
-		dictlist[0] = filter;
-	}
+	
 	
 
 }
