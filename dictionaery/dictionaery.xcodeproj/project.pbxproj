@@ -29,6 +29,7 @@
 		037D57BA177D864400BCD1F1 /* icon.114.png in Resources */ = {isa = PBXBuildFile; fileRef = 037D57B9177D864400BCD1F1 /* icon.114.png */; };
 		037D57BC177D864800BCD1F1 /* icon.72.png in Resources */ = {isa = PBXBuildFile; fileRef = 037D57BB177D864800BCD1F1 /* icon.72.png */; };
 		037D57BE177D864A00BCD1F1 /* icon.144.png in Resources */ = {isa = PBXBuildFile; fileRef = 037D57BD177D864A00BCD1F1 /* icon.144.png */; };
+		58E982D617B881EB0033B482 /* dict.json in Resources */ = {isa = PBXBuildFile; fileRef = 58E982D517B881EB0033B482 /* dict.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +60,7 @@
 		037D57B9177D864400BCD1F1 /* icon.114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.114.png; sourceTree = "<group>"; };
 		037D57BB177D864800BCD1F1 /* icon.72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.72.png; sourceTree = "<group>"; };
 		037D57BD177D864A00BCD1F1 /* icon.144.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.144.png; sourceTree = "<group>"; };
+		58E982D517B881EB0033B482 /* dict.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = dict.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +127,7 @@
 		03452FBF177D08C400B2FAD7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				58E982D517B881EB0033B482 /* dict.json */,
 				03452FDF177D848C00B2FAD7 /* icon.57.png */,
 				03452FE0177D848C00B2FAD7 /* icon.72.png */,
 				03452FE1177D848C00B2FAD7 /* icon.114.png */,
@@ -208,6 +211,7 @@
 				031003CC178070EF00656717 /* icon.list.png in Resources */,
 				031003CD178070EF00656717 /* icon.support.png in Resources */,
 				036D318C178F9E58001A10CC /* septambres-fune.ttf in Resources */,
+				58E982D617B881EB0033B482 /* dict.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,7 +314,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dictionaery/dictionaery-Prefix.pch";
 				INFOPLIST_FILE = "dictionaery/dictionaery-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -323,7 +327,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dictionaery/dictionaery-Prefix.pch";
 				INFOPLIST_FILE = "dictionaery/dictionaery-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;

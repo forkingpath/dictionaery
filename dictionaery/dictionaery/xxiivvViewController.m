@@ -22,10 +22,13 @@
 
 - (void) start
 {
+    [self registerForKeyboardNotifications];
 	[self dictionaeryStart];
 	[self templateStart];
 	[self templateUpdate];
 	[self dictionaeryUpdate];
+    [self loadDictionaery:nil];
+    [self filterReset:nil];
 }
 
 
@@ -79,6 +82,7 @@
 	node[[node count]]	= [NSArray arrayWithObjects: @"support1", @"Application Support", @"ressource", @"", @"", nil];
 	node[[node count]]	= [NSArray arrayWithObjects: @"support2", @"Traumae Documentation", @"ressource", @"", @"", nil];
 	node[[node count]]	= [NSArray arrayWithObjects: @"support3", @"Traumae Lessons", @"ressource", @"", @"", nil];
+    node[[node count]]	= [NSArray arrayWithObjects: @"support4", @"Update Dictionaery", @"ressource", @"", @"", nil];
 	
 	filter = @"";
 	[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
@@ -117,10 +121,7 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
 	NSString *response = [[NSString alloc] initWithData:responseData encoding: NSASCIIStringEncoding];
-	NSError *error;
-	NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: [response dataUsingEncoding:NSUTF8StringEncoding] options: NSJSONReadingMutableContainers error: &error];
-	
-	[self dictionaerySequence:JSON];
+	[self loadDictionaery:response];
 }
 
 
@@ -156,6 +157,8 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	target = tableView;
+    if(![filter isEqual: @""])
+        return dictlist.count;
 	return [dict count];
 }
 
@@ -198,9 +201,17 @@
 		cell.textLabel.textColor = [UIColor blackColor];
 		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0.5];
 		cell.frame = CGRectMake(0, 0, screen.size.width, 300);
-		cell.textLabel.font = [UIFont fontWithName:@"Septambres Fune" size:40];
-		cell.textLabel.text = [self toQwerty:[dictlist[indexPath.row] lowercaseString]];
-		cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ : %@",[dictlist[indexPath.row] lowercaseString],[dict[dictlist[indexPath.row]] capitalizedString]];
+        if([self isTraumae:dictlist[indexPath.row]]) { //Display text as traumae if it is traumae
+            cell.textLabel.font = [UIFont fontWithName:@"Septambres Fune" size:40];
+            cell.textLabel.text = [self toQwerty:[dictlist[indexPath.row] lowercaseString]];
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ : %@",[dictlist[indexPath.row] lowercaseString],[dict[dictlist[indexPath.row]] capitalizedString]];
+        }
+        else { //Display text as roman if it is not traumae
+            cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:40];
+            cell.textLabel.text = [dictlist[indexPath.row] lowercaseString];
+            cell.detailTextLabel.text=@"";
+        }
+		
 		
 	}
 	if( [dicttype[indexPath.row] isEqual:@"core"] ){
@@ -239,9 +250,18 @@
     return 48;
 }
 
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if(self.searchBar.isFirstResponder) {
+        [self.searchBar resignFirstResponder];
+        return nil;
+    }
+    return indexPath;
+}
+
 
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
-	
+    
+    
 	if( [dictlist[indexPath.row] isEqual:@"support1"] ){
 		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Dictionaery+support"]];
 		return;
@@ -254,8 +274,13 @@
 		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Traumae+lessons"]];
 		return;
 	}
+    if( [dictlist[indexPath.row] isEqual:@"support4"] ){
+        [self filterReset:nil];
+		[self dictionaeryUpdate];
+		return;
+	}
 	
-	[self.searchBar resignFirstResponder];
+	
 	
 	// Set Filter
 	filter = cellIds[indexPath.row];
@@ -292,6 +317,7 @@
 	// Search Query
 	
 	if( ![filter isEqual: @""] && ![filter isEqual: @"support"]){
+        //[dict setObject:@"" forKey: @"filter" ];
 		dictlist[0] = filter;
 		dicttype[0] = @"Search Query";
 		i += 1;
@@ -301,7 +327,8 @@
 	
 	for ( NSArray *test in node ){
 		NSString *traumaeWord = test[0];
-		NSString *second = filter;
+        traumaeWord = [[traumaeWord lowercaseString]stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+		NSString *second = [[filter lowercaseString]stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 		
 		// If is not child
 		if( ![filter isEqual: @""] && [traumaeWord rangeOfString:second].location == NSNotFound ) {
@@ -331,9 +358,35 @@
 		dicttype[i] = test[2];
 		i += 1;
 	}
-	
+	if(filter.length>2) {
+        for ( NSArray *test in node ){
+            NSString *englishWord = test[1];
+            englishWord = [[englishWord lowercaseString]stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            NSString *second = [[filter lowercaseString]stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            
+            // If is not child
+            
+            if([dict objectForKey:test[0]] !=NULL)
+                continue;
+            
+            if( ![filter isEqual: @""] && [englishWord rangeOfString:second].location == NSNotFound ) {
+                continue;
+            }
+            // If is not filter
+            /*else if( [filter isEqual:englishWord] ){
+                [dict setObject:test[1] forKey: test[0] ];
+                continue;
+            }*/
+            
+            [dict setObject:test[1] forKey: test[0] ];
+            dictlist[i] = test[0];
+            dicttype[i] = test[2];
+            i += 1;
+        }
+    }
+    
 	// First
-	if( ![filter isEqual: @""] ){
+	if( ![filter isEqual: @""] && ![filter isEqual: @"support"] ){
 		dictlist[0] = filter;
 		dicttype[0] = @"Search Query";
 		i += 1;
@@ -353,11 +406,8 @@
 {
     if(item.tag == 1)
     {
-		[self.searchBar resignFirstResponder];
-		NSLog(@"reset");
-		filter = @"";
-		[self dictLoad];
-		[target reloadData];
+		[self filterReset:nil];
+        
     }
 	if(item.tag == 2)
     {
@@ -396,6 +446,8 @@
 	filter = @"";
 	[self dictLoad];
 	[target reloadData];
+    self.searchBar.text = @"";
+    [self.tabBar setSelectedItem:[self.tabBar.items objectAtIndex:0]]; //sets the tab bar to the first item
 }
 - (IBAction)dictUpdate:(id)sender {
 	self.dictUpdate.enabled = NO;
@@ -442,6 +494,53 @@
 	return fixed;
 	
 }
+//Returns true if the text is pure traumae, false if not
+- (BOOL) isTraumae :(NSString*)traumae
+{
+	NSString *fixed = [[traumae lowercaseString]stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    if(fixed.length<2)
+        return true;
+    if(fixed.length%2==1)
+    {
+        fixed = [fixed substringToIndex:fixed.length-1];
+    }
+	
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"xi" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"di" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"bi" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"xa" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"da" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ba" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"xo" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"do" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"bo" withString:@""];
+	
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ki" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ti" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"pi" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ka" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ta" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"pa" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ko" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"to" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"po" withString:@""];
+	
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"si" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"li" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"vi" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"sa" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"la" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"va" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"so" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"lo" withString:@""];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"vo" withString:@""];
+    
+	if(fixed.length>0)
+        return false;
+    return true;
+	
+}
 
 
 
@@ -471,6 +570,82 @@
 	[UIView setAnimationDelay:delay];
 	viewToFadeIn.alpha = 0;
 	[UIView commitAnimations];
+}
+
+// Call this method somewhere in your view controller setup code.
+- (void)registerForKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWasShown:)
+                                                 name:UIKeyboardDidShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillBeHidden:)
+                                                 name:UIKeyboardWillHideNotification object:nil];
+    
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWasShown:(NSNotification*)aNotification
+{
+    NSDictionary* info = [aNotification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height-44, 0.0);
+    self.tableView.contentInset = contentInsets;
+    self.tableView.scrollIndicatorInsets = contentInsets;
+    
+}
+
+// Called when the UIKeyboardWillHideNotification is sent
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification
+{
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    self.tableView.contentInset = contentInsets;
+    self.tableView.scrollIndicatorInsets = contentInsets;
+}
+//Hide keyboard if they hit the search button
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [self.searchBar resignFirstResponder];
+}
+//Hide keyboard if they cancel search
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    [self.searchBar resignFirstResponder];
+    [self filterReset:nil];
+}
+
+-(void)loadDictionaery:(NSString*)newData {
+    if(newData) {
+        NSError *error;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: [newData dataUsingEncoding:NSUTF8StringEncoding] options: NSJSONReadingMutableContainers error: &error];
+        if(!error) {
+            [newData writeToFile:[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"newDict.json"] atomically:YES encoding:NSUTF8StringEncoding error:&error];
+            [self dictionaerySequence:JSON];
+            return;
+        }
+    }
+    if([[NSFileManager defaultManager] fileExistsAtPath:[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"newDict.json"] ]) {
+        NSError *error;
+        NSString *loadedData = [NSString stringWithContentsOfFile:[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"newDict.json"] encoding:NSUTF8StringEncoding error:&error];
+        if(!error) {
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: [loadedData dataUsingEncoding:NSUTF8StringEncoding] options: NSJSONReadingMutableContainers error: &error];
+            if(!error) {
+                [self dictionaerySequence:JSON];
+                return;
+            }
+        }
+    }
+    NSError *error;
+    NSString *loadedData = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"dict" ofType:@"json"] encoding:NSUTF8StringEncoding error:&error];
+    if(!error) {
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: [loadedData dataUsingEncoding:NSUTF8StringEncoding] options: NSJSONReadingMutableContainers error: &error];
+        if(!error) {
+            [self dictionaerySequence:JSON];
+            return;
+        }
+    }
+    
+    NSLog(@"can't load!");
 }
 
 @end

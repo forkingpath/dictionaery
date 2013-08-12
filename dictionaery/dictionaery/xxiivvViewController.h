@@ -17,6 +17,7 @@
 - (IBAction)dictUpdate:(id)sender;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *dictUpdate;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
+@property (strong, nonatomic) IBOutlet UITabBar *tabBar;
 
 @end
 
