@@ -70,7 +70,8 @@
 }
 
 - (void) dictionaerySequence :(NSDictionary*)sequence
-{	
+{
+    [self dictionaeryStart];
 	int i = 0;
 	for (NSString *test in sequence) {
 		i += 1;
@@ -85,7 +86,8 @@
     node[[node count]]	= [NSArray arrayWithObjects: @"support4", @"Update Dictionaery", @"ressource", @"", @"", nil];
 	
 	filter = @"";
-	[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
+    [self filterReset:nil];
+	//[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
 }
 
 
@@ -358,7 +360,7 @@
 		dicttype[i] = test[2];
 		i += 1;
 	}
-	if(filter.length>2) {
+	if(filter.length>2 && ![self.searchBar.text isEqual:@""]) {
         for ( NSArray *test in node ){
             NSString *englishWord = test[1];
             englishWord = [[englishWord lowercaseString]stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
