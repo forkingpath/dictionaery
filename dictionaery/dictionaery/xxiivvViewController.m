@@ -34,7 +34,7 @@
 
 - (void) dictionaeryStart
 {
-	filter = @"";
+	[self setFilter:nil];
 	
 	node = [NSMutableArray arrayWithObjects:@"",nil];
 	
@@ -85,7 +85,7 @@
 	node[[node count]]	= [NSArray arrayWithObjects: @"support3", @"Traumae Lessons", @"ressource", @"", @"", nil];
     node[[node count]]	= [NSArray arrayWithObjects: @"support4", @"Update Dictionaery", @"ressource", @"", @"", nil];
 	
-	filter = @"";
+	[self setFilter:nil];
     [self filterReset:nil];
 	//[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
 }
@@ -141,7 +141,7 @@
 		self.navigationBarTitle.title = @"Dictionaery";
 	}
 	else{
-		self.navigationBarTitle.title = [filter capitalizedString];
+		self.navigationBarTitle.title =  [[self cleanString:filter] capitalizedString];
 	}
 	
 	if( ![filter isEqual:@""] ){
@@ -199,18 +199,22 @@
 	
 	
 	if( [dictlist[indexPath.row] isEqual:filter] && ![dictlist[indexPath.row] isEqual:@"support"] ){
+        [bgColorView setBackgroundColor:[UIColor clearColor]];
 		bgView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
 		cell.textLabel.textColor = [UIColor blackColor];
 		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0.5];
 		cell.frame = CGRectMake(0, 0, screen.size.width, 300);
-        if([self isTraumae:dictlist[indexPath.row]]) { //Display text as traumae if it is traumae
+        
+        NSString *useFilter = [self cleanString:filter];
+        
+        if([self isTraumae:useFilter]) { //Display text as traumae if it is traumae
             cell.textLabel.font = [UIFont fontWithName:@"Septambres Fune" size:40];
-            cell.textLabel.text = [self toQwerty:[dictlist[indexPath.row] lowercaseString]];
+            cell.textLabel.text = [self toQwerty:useFilter];
             cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ : %@",[dictlist[indexPath.row] lowercaseString],[dict[dictlist[indexPath.row]] capitalizedString]];
         }
         else { //Display text as roman if it is not traumae
             cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:40];
-            cell.textLabel.text = [dictlist[indexPath.row] lowercaseString];
+            cell.textLabel.text = useFilter;
             cell.detailTextLabel.text=@"";
         }
 		
@@ -285,14 +289,20 @@
 	
 	
 	// Set Filter
-	filter = cellIds[indexPath.row];
-	[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
+    [self setFilter:cellIds[indexPath.row]];
+    [self performSelectorInBackground:@selector(dictLoad) withObject:nil];
+	//[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
 	
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
 	filter = searchText;
+    if([filter isEqual:@""] && filterHistory.count>1)
+        filter = [filterHistory objectAtIndex:filterHistory.count-1];
+    else
+        filter = [NSString stringWithFormat:@"%@|",filter];
+    //[self.tabBar setSelectedItem:[self.tabBar.items objectAtIndex:0]];
 	[self dictLoad];
 }
 
@@ -305,7 +315,8 @@
 	[self templateUpdate];
 	[self dictionaeryFilter];
 	[target reloadData];
-	[self.tableView setContentOffset:CGPointZero animated:YES];
+	[self.tableView setContentOffset:CGPointZero animated:FALSE];
+    [self setupBackButton];
 }
 
 - (void) dictionaeryFilter
@@ -313,7 +324,7 @@
 	dict = [[NSMutableDictionary alloc] init];
 	dictlist = [[NSMutableArray alloc] init];
 	dicttype = [[NSMutableArray alloc] init];
-	
+	NSString *useFilter = [self cleanString:filter];
 	int i = 0;
 	
 	// Search Query
@@ -330,7 +341,7 @@
 	for ( NSArray *test in node ){
 		NSString *traumaeWord = test[0];
         traumaeWord = [[traumaeWord lowercaseString]stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-		NSString *second = [[filter lowercaseString]stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+		NSString *second = useFilter;
 		
 		// If is not child
 		if( ![filter isEqual: @""] && [traumaeWord rangeOfString:second].location == NSNotFound ) {
@@ -345,8 +356,8 @@
 			continue;
 		}
 		// If doesn't start with filter
-		else if( ![filter isEqual: @""] && ![[traumaeWord substringWithRange:NSMakeRange(0, [filter length])] isEqual:filter] ){
-			NSLog(@"%@", [traumaeWord substringWithRange:NSMakeRange(0, [filter length])] );
+		else if( ![useFilter isEqual: @""] && ![[traumaeWord substringWithRange:NSMakeRange(0, [useFilter length])] isEqual:useFilter] ){
+			NSLog(@"%@", [traumaeWord substringWithRange:NSMakeRange(0, [useFilter length])] );
 			continue;
 		}
 		// If is not filter
@@ -360,11 +371,11 @@
 		dicttype[i] = test[2];
 		i += 1;
 	}
-	if(filter.length>2 && ![self.searchBar.text isEqual:@""]) {
+	if(filter.length>2 && [filter hasSuffix:@"|"]/* && ![self.searchBar.text isEqual:@""]*/) {
         for ( NSArray *test in node ){
             NSString *englishWord = test[1];
             englishWord = [[englishWord lowercaseString]stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-            NSString *second = [[filter lowercaseString]stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            NSString *second = useFilter;
             
             // If is not child
             
@@ -390,7 +401,10 @@
 	// First
 	if( ![filter isEqual: @""] && ![filter isEqual: @"support"] ){
 		dictlist[0] = filter;
-		dicttype[0] = @"Search Query";
+        if([filter hasSuffix:@"|"])
+            dicttype[0] = @"Search Query"; //only show 'Seach Query' if it actually was a search query
+        else
+            dicttype[0] = @""; 
 		i += 1;
 	}
 	
@@ -406,18 +420,38 @@
 
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
-    if(item.tag == 1)
-    {
-		[self filterReset:nil];
-        
-    }
-	if(item.tag == 2)
-    {
-		filter = @"support";
-		[self dictLoad];
-    }
+    [self setTab:item.tag-1];
 }
 
+-(void)setTab:(int)tab {
+    if(tab == 0 && [filter isEqual:@"support"])
+    {
+        CGRect tableframe = self.tableView.frame;
+        tableframe.size.height-=self.searchBar.frame.size.height;
+        tableframe.origin.y+=self.searchBar.frame.size.height;
+        [self.tableView setFrame:tableframe];
+        
+        [self goBack:nil];
+        
+        
+		//[self filterReset:nil];
+        
+    }
+	if(tab == 1 && ![filter isEqual:@"support"])
+    {
+        
+        CGRect tableframe = self.tableView.frame;
+        tableframe.size.height+=self.searchBar.frame.size.height;
+        tableframe.origin.y-=self.searchBar.frame.size.height;
+        [self.tableView setFrame:tableframe];
+        self.navigationBarTitle.leftBarButtonItem = nil;
+        self.navigationBarTitle.rightBarButtonItem = nil;
+        [self setFilter:@"support"];
+        
+		[self dictLoad];
+    }
+    [self.tabBar setSelectedItem:[self.tabBar.items objectAtIndex:tab]]; //sets the tab bar to the first item
+}
 
 - (UITableViewCell *) templateCell :(UITableViewCell*) cell :(NSIndexPath*)indexPath
 {
@@ -444,12 +478,14 @@
 
 - (IBAction)filterReset:(id)sender {
 	[self.searchBar resignFirstResponder];
+    [self setTab:0];
 	NSLog(@"reset");
-	filter = @"";
+	[self setFilter:nil];
 	[self dictLoad];
 	[target reloadData];
     self.searchBar.text = @"";
-    [self.tabBar setSelectedItem:[self.tabBar.items objectAtIndex:0]]; //sets the tab bar to the first item
+    
+    
 }
 - (IBAction)dictUpdate:(id)sender {
 	self.dictUpdate.enabled = NO;
@@ -596,6 +632,7 @@
     UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height-44, 0.0);
     self.tableView.contentInset = contentInsets;
     self.tableView.scrollIndicatorInsets = contentInsets;
+    [self setFilter:filter];
     
 }
 
@@ -605,6 +642,7 @@
     UIEdgeInsets contentInsets = UIEdgeInsetsZero;
     self.tableView.contentInset = contentInsets;
     self.tableView.scrollIndicatorInsets = contentInsets;
+    
 }
 //Hide keyboard if they hit the search button
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
@@ -648,6 +686,74 @@
     }
     
     NSLog(@"can't load!");
+}
+
+- (IBAction)goBack:(id)sender {
+    [self.searchBar resignFirstResponder];
+    if(filterHistory.count>1) {
+        NSString *newFilter = [filterHistory objectAtIndex:filterHistory.count-1];
+        [filterHistory removeLastObject];
+        if([filter isEqual:newFilter]) {
+            [self goBack:sender];
+            return;
+        }
+        filter = newFilter;
+        self.searchBar.text = @"";
+    }
+    else {
+        [self setFilter:nil];
+        
+    }
+    [self dictLoad];
+    
+}
+
+-(void)setFilter:(NSString*)newFilter {
+    if(!filterHistory)
+        filterHistory = [NSMutableArray new];
+    if(newFilter) {
+        if((filterHistory.count==0 || ![newFilter isEqual:[filterHistory objectAtIndex:filterHistory.count-1]]) && ![filter isEqual:@"support"]) {
+            [filterHistory addObject:filter];
+        }
+        filter=newFilter;
+    }
+    else {
+        filter = @"";
+        self.searchBar.text = @"";
+        filterHistory = [NSMutableArray new];
+    }
+    //[self setupBackButton];
+
+}
+
+-(void)setupBackButton {
+    
+    NSString *lastFilter = nil;
+    if(filterHistory.count>0) {
+        lastFilter = [filterHistory objectAtIndex:filterHistory.count-1];
+        if([lastFilter isEqual:filter]) {
+            lastFilter=nil;
+            if(filterHistory.count>1)
+                lastFilter = [filterHistory objectAtIndex:filterHistory.count-2];
+        }
+    }
+    if(lastFilter && ![filter isEqual:@"support"]) {
+        [self.navigationBarTitle setLeftBarButtonItem:self.backButton animated:NO];
+        if([lastFilter isEqual:@""])
+            lastFilter=@"Back";
+        self.backButton.title=[[self cleanString:lastFilter] capitalizedString];
+        
+        [self.backButton setEnabled:true];
+    }
+    else {
+        [self.navigationBarTitle setLeftBarButtonItem:nil animated:NO];
+        [self.backButton setEnabled:false];
+    }
+}
+
+-(NSString*)cleanString:(NSString*)input {
+    return [[[input lowercaseString] stringByReplacingOccurrencesOfString:@"|" withString:@""] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    return input;
 }
 
 @end

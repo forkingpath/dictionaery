@@ -19,6 +19,9 @@
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) IBOutlet UITabBar *tabBar;
 
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *backButton;
+- (IBAction)goBack:(id)sender;
+
 @end
 
 NSMutableDictionary *dict;
@@ -28,6 +31,8 @@ NSArray *dictPerm;
 NSMutableArray *cellIds;
 NSMutableArray *node;
 NSMutableArray *dictFiltered;
+
+NSMutableArray *filterHistory;
 
 NSString *filter;
 
