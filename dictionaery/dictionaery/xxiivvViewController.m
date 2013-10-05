@@ -208,7 +208,7 @@
         NSString *useFilter = [self cleanString:filter];
         
         if([self isTraumae:useFilter]) { //Display text as traumae if it is traumae
-            cell.textLabel.font = [UIFont fontWithName:@"Septambres Fune" size:40];
+            cell.textLabel.font = [UIFont fontWithName:@"Septambres Revisit" size:40];
             cell.textLabel.text = [self toQwerty:useFilter];
             cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ : %@",[dictlist[indexPath.row] lowercaseString],[dict[dictlist[indexPath.row]] capitalizedString]];
         }
@@ -499,35 +499,35 @@
 {
 	NSString *fixed = traumae;
 	
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"xi" withString:@"W"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"di" withString:@"w"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"bi" withString:@"t"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"xa" withString:@"S"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"da" withString:@"s"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"ba" withString:@"g"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"xo" withString:@"X"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"do" withString:@"x"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"bo" withString:@"b"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"xi" withString:@"w"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"di" withString:@"t"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"bi" withString:@"i"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"xa" withString:@"s"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"da" withString:@"g"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ba" withString:@"k"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"xo" withString:@"x"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"do" withString:@"b"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"bo" withString:@","];
 	
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"ki" withString:@"E"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"ti" withString:@"e"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"pi" withString:@"y"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"ka" withString:@"D"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"ta" withString:@"d"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"pa" withString:@"h"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"ko" withString:@"C"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"to" withString:@"c"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"po" withString:@"n"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ki" withString:@"q"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ti" withString:@"r"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"pi" withString:@"u"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ka" withString:@"a"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ta" withString:@"f"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"pa" withString:@"j"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"ko" withString:@"z"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"to" withString:@"v"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"po" withString:@"m"];
 	
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"si" withString:@"Q"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"li" withString:@"q"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"vi" withString:@"r"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"sa" withString:@"A"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"la" withString:@"a"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"va" withString:@"f"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"so" withString:@"Z"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"lo" withString:@"z"];
-	fixed = [fixed stringByReplacingOccurrencesOfString:@"vo" withString:@"v"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"si" withString:@"e"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"li" withString:@"y"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"vi" withString:@"o"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"sa" withString:@"d"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"la" withString:@"h"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"va" withString:@"l"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"so" withString:@"c"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"lo" withString:@"n"];
+	fixed = [fixed stringByReplacingOccurrencesOfString:@"vo" withString:@"."];
 
 	return fixed;
 	
