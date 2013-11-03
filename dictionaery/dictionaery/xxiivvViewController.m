@@ -81,13 +81,8 @@
 
 - (void) dictionaerySequenceFilter
 {
-	if(filter){
-		NSLog(@"+ Dict    | Filtering: %@",filter);
-		nodeDict = [self dictionaerySequenceFilterLoop];
-	}
-	else{
-		nodeDict = nodeRaw;
-	}
+	NSLog(@"+ Dict    | Filtering: %@",filter);
+	nodeDict = [self dictionaerySequenceFilterLoop];
 }
 
 - (NSMutableDictionary*) dictionaerySequenceFilterLoop
@@ -95,11 +90,15 @@
 	NSMutableDictionary *nodeTemp = [[NSMutableDictionary alloc]initWithCapacity:900];
 	for (NSString* key in nodeRaw) {
 		id value = [nodeRaw objectForKey:key];
-		if( [NSString stringWithFormat:@"%@",value[@"traumae"]].length > filter.length ){
+		if( [NSString stringWithFormat:@"%@",value[@"traumae"]].length > filter.length-1 ){
 			if( [filter isEqualToString:[value[@"traumae"] substringToIndex:filter.length]] ){
 				[nodeTemp setObject:value forKey:value[@"traumae"]];
 			}
 		}
+		if(!filter && [value[@"traumae"] length] == 2){
+			[nodeTemp setObject:value forKey:value[@"traumae"]];
+		}
+		
 	}
 	return nodeTemp;
 }
@@ -289,13 +288,10 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
+	NSLog(@"!!!!! %@", searchText);
 	filter = searchText;
-    if([filter isEqual:@""] && filterHistory.count>1)
-        filter = [filterHistory objectAtIndex:filterHistory.count-1];
-    else
-        filter = [NSString stringWithFormat:@"%@|",filter];
-    //[self.tabBar setSelectedItem:[self.tabBar.items objectAtIndex:0]];
-	[self dictLoad];
+	[self dictionaerySequenceFilter];
+	[self filterSet:filter];
 }
 
 
