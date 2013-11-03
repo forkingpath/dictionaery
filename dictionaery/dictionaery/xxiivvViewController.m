@@ -90,23 +90,25 @@
 {
 	if(filter){
 		NSLog(@"+ Dict    | Filtering: %@",filter);
-		
-		NSMutableDictionary *nodeTemp = [[NSMutableDictionary alloc]initWithCapacity:900];
-		
-		for (NSString* key in nodeRaw) {
-			id value = [nodeRaw objectForKey:key];
-			
-			if( [value[@"traumae"] isEqualToString:@"xoka"] ){
-				NSLog(@"> %@",value[@"traumae"]);
-				[nodeTemp setObject:value forKey:@"xoka"];
-			}
-		}
-		
-		nodeDict = nodeTemp;
+		nodeDict = [self dictionaerySequenceFilterLoop];
 	}
 	else{
 		nodeDict = nodeRaw;
 	}
+}
+
+- (NSMutableDictionary*) dictionaerySequenceFilterLoop
+{
+	NSMutableDictionary *nodeTemp = [[NSMutableDictionary alloc]initWithCapacity:900];
+	for (NSString* key in nodeRaw) {
+		id value = [nodeRaw objectForKey:key];
+		if( [NSString stringWithFormat:@"%@",value[@"traumae"]].length > filter.length ){
+			if( [filter isEqualToString:[value[@"traumae"] substringToIndex:filter.length]] ){
+				[nodeTemp setObject:value forKey:value[@"traumae"]];
+			}
+		}
+	}
+	return nodeTemp;
 }
 
 
