@@ -18,7 +18,6 @@
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *backButton;
 - (IBAction)goBack:(id)sender;
 - (IBAction)dictUpdate:(id)sender;
-- (IBAction)filterReset:(id)sender;
 
 @end
 

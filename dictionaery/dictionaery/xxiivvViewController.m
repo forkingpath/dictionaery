@@ -32,7 +32,7 @@
 	[self dictionaeryUpdate];
     [self dictionaeryLoad:nil];
 	
-    [self filterReset:nil];
+    [self filterSet:nil];
 	NSLog(@"+ Start   | Started");
 }
 
@@ -41,7 +41,8 @@
 // ------------------------
 
 - (void) templateStart
-{ }
+{
+}
 
 - (void) templateUpdate
 {
@@ -50,13 +51,6 @@
 	}
 	else{
 		self.navigationBarTitle.title =  [[self cleanString:filter] capitalizedString];
-	}
-	
-	if( ![filter isEqual:@""] ){
-		self.filterReset.enabled = YES;
-	}
-	else{
-		self.filterReset.enabled = NO;
 	}
 }
 
@@ -83,7 +77,6 @@
 	nodeRaw = sequence;
 	[self dictionaerySequenceFilter];
 	[self filterSet:nil];
-    [self filterReset:nil];
 }
 
 - (void) dictionaerySequenceFilter
@@ -205,7 +198,6 @@
 	
 	NSDictionary *traumaeWord = nodeDict[[[nodeDict allKeys] objectAtIndex:indexPath.row]];
 	
-	
 	// Draw cells
 	
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MainCell"];
@@ -284,20 +276,12 @@
 	filter = newFilter;
 	NSLog(@"+ Filter  | Set: %@",filter);
 	[self setupBackButton];
+	[self setupNavigationBar];
 	[self dictionaerySequenceFilter];
 	[target reloadData];
 	[self.tableView setContentOffset:CGPointZero animated:FALSE];
 	
 }
-
-- (IBAction)filterReset:(id)sender {
-	[self.searchBar resignFirstResponder];
-	[self filterSet:nil];
-	[self dictLoad];
-	[target reloadData];
-    self.searchBar.text = @"";
-}
-
 
 // ------------------------
 #  pragma mark Search
@@ -442,18 +426,10 @@
 	
 }
 
-
-
-
-
-
-
 - (void) updateEnable
 {
 	self.dictUpdate.enabled = YES;
 }
-
-
 
 // ------------------------
 #  pragma mark Animations
@@ -523,7 +499,6 @@
 //Hide keyboard if they cancel search
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     [self.searchBar resignFirstResponder];
-    [self filterReset:nil];
 }
 
 
@@ -538,39 +513,50 @@
             return;
         }
         filter = newFilter;
-        self.searchBar.text = @"";
     }
     else {
         [self filterSet:nil];
         
     }
     [self dictLoad];
-    
+	[self setupNavigationBar];
 }
 
 -(void)setupBackButton {
     
-    NSString *lastFilter = nil;
-    if(filterHistory.count>0) {
-        lastFilter = [filterHistory objectAtIndex:filterHistory.count-1];
-        if([lastFilter isEqual:filter]) {
-            lastFilter=nil;
-            if(filterHistory.count>1)
-                lastFilter = [filterHistory objectAtIndex:filterHistory.count-2];
-        }
-    }
-    if(lastFilter && ![filter isEqual:@"support"]) {
-        [self.navigationBarTitle setLeftBarButtonItem:self.backButton animated:NO];
-        if([lastFilter isEqual:@""])
-            lastFilter=@"Back";
-        self.backButton.title=[[self cleanString:lastFilter] capitalizedString];
-        
-        [self.backButton setEnabled:true];
-    }
-    else {
-        [self.navigationBarTitle setLeftBarButtonItem:nil animated:NO];
-        [self.backButton setEnabled:false];
-    }
+//    NSString *lastFilter = nil;
+//    if(filterHistory.count>0) {
+//        lastFilter = [filterHistory objectAtIndex:filterHistory.count-1];
+//        if([lastFilter isEqual:filter]) {
+//            lastFilter=nil;
+//            if(filterHistory.count>1)
+//                lastFilter = [filterHistory objectAtIndex:filterHistory.count-2];
+//        }
+//    }
+//    if(lastFilter && ![filter isEqual:@"support"]) {
+//        [self.navigationBarTitle setLeftBarButtonItem:self.backButton animated:NO];
+//        if([lastFilter isEqual:@""])
+//            lastFilter=@"Back";
+//        self.backButton.title=[[self cleanString:lastFilter] capitalizedString];
+//        
+//        [self.backButton setEnabled:true];
+//    }
+//    else {
+//        [self.navigationBarTitle setLeftBarButtonItem:nil animated:NO];
+//        [self.backButton setEnabled:false];
+//    }
+}
+
+-(void)setupNavigationBar
+{
+	if(filter){
+		self.navigationBarTitle.title = filter;
+		self.backButton.enabled = YES;
+	}
+	else{
+		self.navigationBarTitle.title = @"Dictionaery";
+		self.backButton.enabled = NO;
+	}
 }
 
 -(NSString*)cleanString:(NSString*)input {
