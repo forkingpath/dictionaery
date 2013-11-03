@@ -12,15 +12,13 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (strong, nonatomic) IBOutlet UINavigationItem *navigationBarTitle;
-- (IBAction)filterReset:(id)sender;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *filterReset;
-- (IBAction)dictUpdate:(id)sender;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *dictUpdate;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
-@property (strong, nonatomic) IBOutlet UITabBar *tabBar;
-
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *backButton;
 - (IBAction)goBack:(id)sender;
+- (IBAction)dictUpdate:(id)sender;
+- (IBAction)filterReset:(id)sender;
 
 @end
 
@@ -29,8 +27,9 @@ NSMutableArray *dicttype;
 NSMutableArray *dictlist;
 NSArray *dictPerm;
 NSMutableArray *cellIds;
-NSMutableArray *node;
-NSMutableArray *dictFiltered;
+NSDictionary *nodeRaw;
+NSDictionary *nodeDict;
+NSDictionary *nodeDictFiltered;
 
 NSMutableArray *filterHistory;
 

@@ -22,85 +22,137 @@
 
 - (void) start
 {
+	NSLog(@"+ Start   | Init");
     [self registerForKeyboardNotifications];
-	[self dictionaeryStart];
+	
 	[self templateStart];
 	[self templateUpdate];
+	
+	[self dictionaeryStart];
 	[self dictionaeryUpdate];
-    [self loadDictionaery:nil];
+    [self dictionaeryLoad:nil];
+	
     [self filterReset:nil];
+	NSLog(@"+ Start   | Started");
 }
 
+// ------------------------
+#  pragma mark Template
+// ------------------------
+
+- (void) templateStart
+{ }
+
+- (void) templateUpdate
+{
+	if( [filter isEqual: @""] ){
+		self.navigationBarTitle.title = @"Dictionaery";
+	}
+	else{
+		self.navigationBarTitle.title =  [[self cleanString:filter] capitalizedString];
+	}
+	
+	if( ![filter isEqual:@""] ){
+		self.filterReset.enabled = YES;
+	}
+	else{
+		self.filterReset.enabled = NO;
+	}
+}
+
+// ------------------------
+#  pragma mark Dictionaery
+// ------------------------
 
 - (void) dictionaeryStart
 {
-	[self setFilter:nil];
-	
-	node = [NSMutableArray arrayWithObjects:@"",nil];
-	
-	int myCount = 0;
-	while ( myCount < 90 )
-	{
-		myCount++;
-		node[myCount] = [NSArray arrayWithObjects: @"0", @"Connecting..", @"The dictionary needs to be downloaded", @"0", @"silence", nil];
-	}
-	
-	node[0]		= [NSArray arrayWithObjects: @"Welcome", @"Notes", @"Beta", @"Something else", @"3rd", nil];
-	
-	[self dictionaeryFilter];
-	
-	myCount = 0;
-	cellIds = [NSMutableArray arrayWithObjects:@"",nil];
-	while ( myCount < 30 )
-	{
-		myCount++;
-		cellIds[myCount] = @"unnamed";
-	}	
+	NSLog(@"+ Dict    | Start");
 		
 }
 
-
-
-
-
 - (void) dictionaeryUpdate
 {
+	NSLog(@"+ Dict    | Update");
 	self.navigationBarTitle.title = @"Downloading..";
 	[self apiPull];
 }
 
 - (void) dictionaerySequence :(NSDictionary*)sequence
 {
-    [self dictionaeryStart];
-	int i = 0;
-	for (NSString *test in sequence) {
-		i += 1;
-		NSArray *value = [sequence objectForKey:test];
-		node[i] = [NSArray arrayWithObjects: value[0], value[1], value[2], value[3], value[4], nil];
-	}
-	
-	
-	node[[node count]]	= [NSArray arrayWithObjects: @"support1", @"Application Support", @"ressource", @"", @"", nil];
-	node[[node count]]	= [NSArray arrayWithObjects: @"support2", @"Traumae Documentation", @"ressource", @"", @"", nil];
-	node[[node count]]	= [NSArray arrayWithObjects: @"support3", @"Traumae Lessons", @"ressource", @"", @"", nil];
-    node[[node count]]	= [NSArray arrayWithObjects: @"support4", @"Update Dictionaery", @"ressource", @"", @"", nil];
-	
-	[self setFilter:nil];
+	NSLog(@"+ Dict    | Sequence");
+	nodeRaw = sequence;
+	[self dictionaerySequenceFilter];
+	[self filterSet:nil];
     [self filterReset:nil];
-	//[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
+}
+
+- (void) dictionaerySequenceFilter
+{
+	if(filter){
+		NSLog(@"+ Dict    | Filtering: %@",filter);
+		
+		NSMutableDictionary *nodeTemp = [[NSMutableDictionary alloc]initWithCapacity:900];
+		
+		for (NSString* key in nodeRaw) {
+			id value = [nodeRaw objectForKey:key];
+			
+			if( [value[@"traumae"] isEqualToString:@"xoka"] ){
+				NSLog(@"> %@",value[@"traumae"]);
+				[nodeTemp setObject:value forKey:@"xoka"];
+			}
+		}
+		
+		nodeDict = nodeTemp;
+	}
+	else{
+		nodeDict = nodeRaw;
+	}
 }
 
 
+-(void)dictionaeryLoad:(NSString*)newData {
+	NSLog(@"+ Dict    | Loading");
+    if(newData) {
+        NSError *error;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: [newData dataUsingEncoding:NSUTF8StringEncoding] options: NSJSONReadingMutableContainers error: &error];
+        if(!error) {
+            [newData writeToFile:[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"newDict.json"] atomically:YES encoding:NSUTF8StringEncoding error:&error];
+            [self dictionaerySequence:JSON];
+            return;
+        }
+    }
+    if([[NSFileManager defaultManager] fileExistsAtPath:[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"newDict.json"] ]) {
+        NSError *error;
+        NSString *loadedData = [NSString stringWithContentsOfFile:[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"newDict.json"] encoding:NSUTF8StringEncoding error:&error];
+        if(!error) {
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: [loadedData dataUsingEncoding:NSUTF8StringEncoding] options: NSJSONReadingMutableContainers error: &error];
+            if(!error) {
+                [self dictionaerySequence:JSON];
+                return;
+            }
+        }
+    }
+    NSError *error;
+    NSString *loadedData = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"dict" ofType:@"json"] encoding:NSUTF8StringEncoding error:&error];
+    if(!error) {
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: [loadedData dataUsingEncoding:NSUTF8StringEncoding] options: NSJSONReadingMutableContainers error: &error];
+        if(!error) {
+            [self dictionaerySequence:JSON];
+            return;
+        }
+    }
+	NSLog(@"+ Dict    | Could not load");
+}
 
 
-
-// =========================
-// @Application API
-// =========================
+// ------------------------
+#  pragma mark API
+// ------------------------
 
 - (void)apiPull
 {
-	NSURL *myURL = [NSURL URLWithString: @"http://api.xxiivv.com/?key=traumae&cmd=read" ];
+	NSLog(@"+ API     | Pulling entire dict");
+	NSURL *myURL = [NSURL URLWithString: @"http://api.xxiivv.com/?key=traumae" ];
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:myURL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:60];
 	[[NSURLConnection alloc] initWithRequest:request delegate:self];
 }
@@ -122,49 +174,35 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
+	NSLog(@"+ API     | Found dictionaery");
 	NSString *response = [[NSString alloc] initWithData:responseData encoding: NSASCIIStringEncoding];
-	[self loadDictionaery:response];
+	[self dictionaeryLoad:response];
 }
 
 
 
+// ------------------------
+#  pragma mark Table
+// ------------------------
 
-- (void) templateStart
-{
-	screen = [[UIScreen mainScreen] bounds];
-	[[UITabBar appearance] setSelectedImageTintColor:[UIColor colorWithRed:0.3 green:0.3 blue:0.3 alpha:1]];
-}
-
-- (void) templateUpdate
-{
-	if( [filter isEqual: @""] ){
-		self.navigationBarTitle.title = @"Dictionaery";
-	}
-	else{
-		self.navigationBarTitle.title =  [[self cleanString:filter] capitalizedString];
-	}
-	
-	if( ![filter isEqual:@""] ){
-		self.filterReset.enabled = YES;
-	}
-	else{
-		self.filterReset.enabled = NO;
-	}
-}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *) tableView
 {
 	return 1;
 }
 
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	target = tableView;
-    if(![filter isEqual: @""])
-        return dictlist.count;
-	return [dict count];
+	
+	NSLog(@"+ Table   | Item Count: %d",[nodeDict count]);
+	return [nodeDict count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+	
+	NSDictionary *traumaeWord = nodeDict[[[nodeDict allKeys] objectAtIndex:indexPath.row]];
+	
 	
 	// Draw cells
 	
@@ -182,44 +220,11 @@
 	cell.detailTextLabel.backgroundColor = [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:0];
 	cell.detailTextLabel.highlightedTextColor = [UIColor blackColor];
 	
-	cell.backgroundView.backgroundColor = [UIColor redColor];
-	
-	UIView *bgView = [[UIView alloc] initWithFrame:cell.frame];
-	bgView.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:0.3];
-	cell.backgroundView = bgView;
-	
-	UIView *bgColorView = [[UIView alloc] init];
-	[bgColorView setBackgroundColor:[UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:0.2]];
-	[cell setSelectedBackgroundView:bgColorView];
-	cell.textLabel.highlightedTextColor = [UIColor blackColor];
-	
-	cell.textLabel.text = [dictlist[indexPath.row] uppercaseString];
-	cell.detailTextLabel.text = [dict[dictlist[indexPath.row]] capitalizedString];
+	cell.textLabel.text = traumaeWord[@"traumae"];
+	cell.detailTextLabel.text = traumaeWord[@"english"];
 	cell = [self templateCell:cell:indexPath];
 	
 	
-	if( [dictlist[indexPath.row] isEqual:filter] && ![dictlist[indexPath.row] isEqual:@"support"] ){
-        [bgColorView setBackgroundColor:[UIColor clearColor]];
-		bgView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
-		cell.textLabel.textColor = [UIColor blackColor];
-		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0.5];
-		cell.frame = CGRectMake(0, 0, screen.size.width, 300);
-        
-        NSString *useFilter = [self cleanString:filter];
-        
-        if([self isTraumae:useFilter]) { //Display text as traumae if it is traumae
-            cell.textLabel.font = [UIFont fontWithName:@"Septambres Revisit" size:40];
-            cell.textLabel.text = [self toQwerty:useFilter];
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ : %@",[dictlist[indexPath.row] lowercaseString],[dict[dictlist[indexPath.row]] capitalizedString]];
-        }
-        else { //Display text as roman if it is not traumae
-            cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:40];
-            cell.textLabel.text = useFilter;
-            cell.detailTextLabel.text=@"";
-        }
-		
-		
-	}
 	if( [dicttype[indexPath.row] isEqual:@"core"] ){
 		cell.detailTextLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:1];
 	}
@@ -238,9 +243,6 @@
 		cell.textLabel.text = @"Support";
 		cell.detailTextLabel.text = @"Visit the application support";		
 	}
-	
-	
-	NSLog(@"TYPE %@",dicttype[indexPath.row]);
 	
 	cellIds[indexPath.row] = dictlist[indexPath.row];
 	
@@ -266,34 +268,38 @@
 
 
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
-    
-    
-	if( [dictlist[indexPath.row] isEqual:@"support1"] ){
-		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Dictionaery+support"]];
-		return;
-	}
-	if( [dictlist[indexPath.row] isEqual:@"support2"] ){
-		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Traumae"]];
-		return;
-	}
-	if( [dictlist[indexPath.row] isEqual:@"support3"] ){
-		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://wiki.xxiivv.com/Traumae+lessons"]];
-		return;
-	}
-    if( [dictlist[indexPath.row] isEqual:@"support4"] ){
-        [self filterReset:nil];
-		[self dictionaeryUpdate];
-		return;
-	}
 	
-	
-	
-	// Set Filter
-    [self setFilter:cellIds[indexPath.row]];
-    [self performSelectorInBackground:@selector(dictLoad) withObject:nil];
-	//[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dictLoad) userInfo:nil repeats:NO];
+	[self filterSet:nodeDict[[[nodeDict allKeys] objectAtIndex:indexPath.row]][@"traumae"]];
 	
 }
+
+// ------------------------
+#  pragma mark Filter
+// ------------------------
+
+-(void)filterSet:(NSString*)newFilter {
+	
+	filter = newFilter;
+	NSLog(@"+ Filter  | Set: %@",filter);
+	[self setupBackButton];
+	[self dictionaerySequenceFilter];
+	[target reloadData];
+	[self.tableView setContentOffset:CGPointZero animated:FALSE];
+	
+}
+
+- (IBAction)filterReset:(id)sender {
+	[self.searchBar resignFirstResponder];
+	[self filterSet:nil];
+	[self dictLoad];
+	[target reloadData];
+    self.searchBar.text = @"";
+}
+
+
+// ------------------------
+#  pragma mark Search
+// ------------------------
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
@@ -313,144 +319,9 @@
 {
 	NSLog(@"Filter: %@",filter);
 	[self templateUpdate];
-	[self dictionaeryFilter];
 	[target reloadData];
 	[self.tableView setContentOffset:CGPointZero animated:FALSE];
     [self setupBackButton];
-}
-
-- (void) dictionaeryFilter
-{
-	dict = [[NSMutableDictionary alloc] init];
-	dictlist = [[NSMutableArray alloc] init];
-	dicttype = [[NSMutableArray alloc] init];
-	NSString *useFilter = [self cleanString:filter];
-	int i = 0;
-	
-	// Search Query
-	
-	if( ![filter isEqual: @""] && ![filter isEqual: @"support"]){
-        //[dict setObject:@"" forKey: @"filter" ];
-		dictlist[0] = filter;
-		dicttype[0] = @"Search Query";
-		i += 1;
-	}
-	
-	// Direct Children
-	
-	for ( NSArray *test in node ){
-		NSString *traumaeWord = test[0];
-        traumaeWord = [[traumaeWord lowercaseString]stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-		NSString *second = useFilter;
-		
-		// If is not child
-		if( ![filter isEqual: @""] && [traumaeWord rangeOfString:second].location == NSNotFound ) {
-			continue;
-		}
-		// If is not root
-		else if( [filter isEqual:@""] && [test[0] length] > 2 ){
-			continue;
-		}
-		// If is not direct child
-		else if( ![filter isEqual:@""] && [test[0] length] > ( [filter length]+ 2) ){
-			continue;
-		}
-		// If doesn't start with filter
-		else if( ![useFilter isEqual: @""] && ![[traumaeWord substringWithRange:NSMakeRange(0, [useFilter length])] isEqual:useFilter] ){
-			NSLog(@"%@", [traumaeWord substringWithRange:NSMakeRange(0, [useFilter length])] );
-			continue;
-		}
-		// If is not filter
-		else if( [filter isEqual:traumaeWord] ){
-			[dict setObject:test[1] forKey: test[0] ];
-			continue;
-		}
-		
-		[dict setObject:test[1] forKey: test[0] ];
-		dictlist[i] = test[0];
-		dicttype[i] = test[2];
-		i += 1;
-	}
-	if(filter.length>2 && [filter hasSuffix:@"|"]/* && ![self.searchBar.text isEqual:@""]*/) {
-        for ( NSArray *test in node ){
-            NSString *englishWord = test[1];
-            englishWord = [[englishWord lowercaseString]stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-            NSString *second = useFilter;
-            
-            // If is not child
-            
-            if([dict objectForKey:test[0]] !=NULL)
-                continue;
-            
-            if( ![filter isEqual: @""] && [englishWord rangeOfString:second].location == NSNotFound ) {
-                continue;
-            }
-            // If is not filter
-            /*else if( [filter isEqual:englishWord] ){
-                [dict setObject:test[1] forKey: test[0] ];
-                continue;
-            }*/
-            
-            [dict setObject:test[1] forKey: test[0] ];
-            dictlist[i] = test[0];
-            dicttype[i] = test[2];
-            i += 1;
-        }
-    }
-    
-	// First
-	if( ![filter isEqual: @""] && ![filter isEqual: @"support"] ){
-		dictlist[0] = filter;
-        if([filter hasSuffix:@"|"])
-            dicttype[0] = @"Search Query"; //only show 'Seach Query' if it actually was a search query
-        else
-            dicttype[0] = @""; 
-		i += 1;
-	}
-	
-	// Last
-	if( ![filter isEqual: @""] && i == 1 ){
-		[dict setObject:@"Start a new search query" forKey: @"End" ];
-		dictlist[i] = @"End of tree";
-		dicttype[i] = @"end";
-	}
-	
-}
-
-
-- (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
-{
-    [self setTab:item.tag-1];
-}
-
--(void)setTab:(int)tab {
-    if(tab == 0 && [filter isEqual:@"support"])
-    {
-        CGRect tableframe = self.tableView.frame;
-        tableframe.size.height-=self.searchBar.frame.size.height;
-        tableframe.origin.y+=self.searchBar.frame.size.height;
-        [self.tableView setFrame:tableframe];
-        
-        [self goBack:nil];
-        
-        
-		//[self filterReset:nil];
-        
-    }
-	if(tab == 1 && ![filter isEqual:@"support"])
-    {
-        
-        CGRect tableframe = self.tableView.frame;
-        tableframe.size.height+=self.searchBar.frame.size.height;
-        tableframe.origin.y-=self.searchBar.frame.size.height;
-        [self.tableView setFrame:tableframe];
-        self.navigationBarTitle.leftBarButtonItem = nil;
-        self.navigationBarTitle.rightBarButtonItem = nil;
-        [self setFilter:@"support"];
-        
-		[self dictLoad];
-    }
-    [self.tabBar setSelectedItem:[self.tabBar.items objectAtIndex:tab]]; //sets the tab bar to the first item
 }
 
 - (UITableViewCell *) templateCell :(UITableViewCell*) cell :(NSIndexPath*)indexPath
@@ -476,17 +347,6 @@
 }
 
 
-- (IBAction)filterReset:(id)sender {
-	[self.searchBar resignFirstResponder];
-    [self setTab:0];
-	NSLog(@"reset");
-	[self setFilter:nil];
-	[self dictLoad];
-	[target reloadData];
-    self.searchBar.text = @"";
-    
-    
-}
 - (IBAction)dictUpdate:(id)sender {
 	self.dictUpdate.enabled = NO;
 	[self dictionaeryUpdate];
@@ -592,6 +452,11 @@
 }
 
 
+
+// ------------------------
+#  pragma mark Animations
+// ------------------------
+
 - (void)fadeIn:(UIView*)viewToFadeIn d:(NSTimeInterval)delay t:(NSTimeInterval)duration
 {
 	[UIView beginAnimations: @"Fade In" context:nil];
@@ -609,6 +474,11 @@
 	viewToFadeIn.alpha = 0;
 	[UIView commitAnimations];
 }
+
+
+// ------------------------
+#  pragma mark Interactions
+// ------------------------
 
 // Call this method somewhere in your view controller setup code.
 - (void)registerForKeyboardNotifications
@@ -632,7 +502,7 @@
     UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height-44, 0.0);
     self.tableView.contentInset = contentInsets;
     self.tableView.scrollIndicatorInsets = contentInsets;
-    [self setFilter:filter];
+    [self filterSet:filter];
     
 }
 
@@ -654,39 +524,7 @@
     [self filterReset:nil];
 }
 
--(void)loadDictionaery:(NSString*)newData {
-    if(newData) {
-        NSError *error;
-        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: [newData dataUsingEncoding:NSUTF8StringEncoding] options: NSJSONReadingMutableContainers error: &error];
-        if(!error) {
-            [newData writeToFile:[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"newDict.json"] atomically:YES encoding:NSUTF8StringEncoding error:&error];
-            [self dictionaerySequence:JSON];
-            return;
-        }
-    }
-    if([[NSFileManager defaultManager] fileExistsAtPath:[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"newDict.json"] ]) {
-        NSError *error;
-        NSString *loadedData = [NSString stringWithContentsOfFile:[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"newDict.json"] encoding:NSUTF8StringEncoding error:&error];
-        if(!error) {
-            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: [loadedData dataUsingEncoding:NSUTF8StringEncoding] options: NSJSONReadingMutableContainers error: &error];
-            if(!error) {
-                [self dictionaerySequence:JSON];
-                return;
-            }
-        }
-    }
-    NSError *error;
-    NSString *loadedData = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"dict" ofType:@"json"] encoding:NSUTF8StringEncoding error:&error];
-    if(!error) {
-        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: [loadedData dataUsingEncoding:NSUTF8StringEncoding] options: NSJSONReadingMutableContainers error: &error];
-        if(!error) {
-            [self dictionaerySequence:JSON];
-            return;
-        }
-    }
-    
-    NSLog(@"can't load!");
-}
+
 
 - (IBAction)goBack:(id)sender {
     [self.searchBar resignFirstResponder];
@@ -701,29 +539,11 @@
         self.searchBar.text = @"";
     }
     else {
-        [self setFilter:nil];
+        [self filterSet:nil];
         
     }
     [self dictLoad];
     
-}
-
--(void)setFilter:(NSString*)newFilter {
-    if(!filterHistory)
-        filterHistory = [NSMutableArray new];
-    if(newFilter) {
-        if((filterHistory.count==0 || ![newFilter isEqual:[filterHistory objectAtIndex:filterHistory.count-1]]) && ![filter isEqual:@"support"]) {
-            [filterHistory addObject:filter];
-        }
-        filter=newFilter;
-    }
-    else {
-        filter = @"";
-        self.searchBar.text = @"";
-        filterHistory = [NSMutableArray new];
-    }
-    //[self setupBackButton];
-
 }
 
 -(void)setupBackButton {
