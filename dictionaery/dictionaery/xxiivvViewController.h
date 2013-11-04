@@ -24,13 +24,15 @@ UILabel *descriptionLabel;
 UIView *typeIndicator;
 
 NSMutableDictionary *dict;
-NSMutableArray *dicttype;
-NSMutableArray *dictlist;
-NSArray *dictPerm;
-NSMutableArray *cellIds;
+NSMutableDictionary *dicttype;
+
 NSDictionary *nodeRaw;
 NSDictionary *nodeDict;
 NSDictionary *nodeDictFiltered;
+
+NSMutableArray *dictlist;
+NSArray *dictPerm;
+NSMutableArray *cellIds;
 
 NSMutableArray *filterHistory;
 

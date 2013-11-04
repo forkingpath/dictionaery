@@ -76,7 +76,25 @@
 	NSLog(@"+ Dict    | Sequence");
 	nodeRaw = sequence;
 	[self dictionaerySequenceFilter];
+	[self dictionaeryTypesColoursCreate:sequence];
 	[self filterSet:nil];
+}
+
+-(void)dictionaeryTypesColoursCreate :(NSDictionary*)sequence
+{
+	
+	NSDictionary *dictColours = [NSDictionary dictionaryWithObjectsAndKeys: @"value1", @"key1", @"value2", @"key2", nil];
+	
+	dicttype = [[NSMutableDictionary alloc]init];
+	
+	for (NSString *key in sequence) {
+		id value = [sequence objectForKey:key];
+		//		NSLog(@"+ %@", value[@"type"]);
+		dicttype[value[@"type"]] = @"1";
+	}
+	dicttype[@"test"] = @"hey";
+	NSLog(@"!! %@",dicttype);
+	
 }
 
 - (void) dictionaerySequenceFilter
@@ -205,44 +223,55 @@
 	
 	cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"MainCell"];
 	
-	cell.textLabel.font = [UIFont fontWithName:@"Didot" size:24];
+	cell.textLabel.font = [UIFont fontWithName:@"Georgia-Italic" size:24];
 	cell.textLabel.highlightedTextColor = [UIColor blackColor];
 
-	cell.detailTextLabel.font = [UIFont systemFontOfSize:12.0];
+	cell.detailTextLabel.font = [UIFont boldSystemFontOfSize:12];
 	cell.detailTextLabel.highlightedTextColor = [UIColor blackColor];
+	cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",traumaeWord[@"english"]];
 	
 	cell.textLabel.text = traumaeWord[@"traumae"];
 	
 	// Details
 	
-	titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 300, 24)];
+	titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 10, 300, 24)];
 	titleLabel.font = [UIFont fontWithName:@"Didot-Italic" size:24];
 	titleLabel.textAlignment = UITextAlignmentRight;
-	titleLabel.text = @"Adultspeak";
+	titleLabel.text = traumaeWord[@"adultspeak"];
+	titleLabel.alpha = 0.5;
+	if ([traumaeWord[@"adultspeak"] isEqualToString:traumaeWord[@"traumae"]]) {
+		titleLabel.hidden = YES;
+	}
 	[cell addSubview:titleLabel];
 	
-	descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 35, 300, 20)];
+	// Alternative meanings
+	
+	descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(100, 34, 300, 20)];
 	descriptionLabel.font = [UIFont systemFontOfSize:12.0];
-	descriptionLabel.textAlignment = UITextAlignmentRight;
+	descriptionLabel.textAlignment = UITextAlignmentLeft;
 	descriptionLabel.text = traumaeWord[@"type"];
 	[cell addSubview:descriptionLabel];
 	
-	typeIndicator = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 60)];
+	
+	NSString *traumaeWordAlternatives = @"";
+	
+	for (NSString *alt in traumaeWord[@"alternatives"]) {
+		if (![alt isEqualToString:cell.detailTextLabel.text]) {
+			traumaeWordAlternatives = [NSString stringWithFormat:@"%@, %@",alt, traumaeWordAlternatives];
+		}
+	}
+	
+	descriptionLabel.text = traumaeWordAlternatives;
+	
+	typeIndicator = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 6, 60)];
 	if( [traumaeWord[@"type"] isEqual:@"expression"] ){
 		typeIndicator.backgroundColor = [UIColor redColor];
 	}
 	
 	[cell addSubview:typeIndicator];
 	
-	
-	cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",traumaeWord[@"english"]];
-	
 	cell = [self templateCell:cell:indexPath];
-	
-	if( [traumaeWord[@"type"] isEqual:@"expression"] ){
-		cell.detailTextLabel.textColor = [UIColor redColor];
-	}
-	
+
 	return cell;
 	
 }
@@ -312,16 +341,6 @@
 
 - (UITableViewCell *) templateCell :(UITableViewCell*) cell :(NSIndexPath*)indexPath
 {
-	CGRect labelFrame = CGRectMake( screen.size.width-110, -1, 100, 30 );
-	UILabel* label = [[UILabel alloc] initWithFrame: labelFrame];
-	if( ![[NSString stringWithFormat:@"%@",dicttype[indexPath.row]] isEqual:@"ressource"] ){
-		[label setText: [NSString stringWithFormat:@"%@",dicttype[indexPath.row]] ];
-	}
-	[label setTextColor: [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5]];
-	[label setBackgroundColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0]];
-	[label setTextAlignment:NSTextAlignmentRight];
-	[label setFont:	[UIFont fontWithName:@"Helvetica-Bold" size:12]];
-	[cell.contentView addSubview:label];
 	
 	return cell;
 }
