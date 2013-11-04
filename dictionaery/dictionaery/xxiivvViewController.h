@@ -12,14 +12,16 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (strong, nonatomic) IBOutlet UINavigationItem *navigationBarTitle;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *filterReset;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *dictUpdate;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *backButton;
 - (IBAction)goBack:(id)sender;
 - (IBAction)dictUpdate:(id)sender;
-
 @end
+
+UILabel *titleLabel;
+UILabel *descriptionLabel;
+UIView *typeIndicator;
 
 NSMutableDictionary *dict;
 NSMutableArray *dicttype;
@@ -40,3 +42,4 @@ CGRect screen;
 
 NSMutableData *receivedData;
 NSMutableData *responseData;
+

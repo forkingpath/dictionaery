@@ -188,7 +188,6 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	target = tableView;
-	
 	NSLog(@"+ Table   | Item Count: %d",[nodeDict count]);
 	return [nodeDict count];
 }
@@ -206,38 +205,43 @@
 	
 	cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"MainCell"];
 	
-	cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:18];
-	cell.textLabel.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:0];
+	cell.textLabel.font = [UIFont fontWithName:@"Didot" size:24];
+	cell.textLabel.highlightedTextColor = [UIColor blackColor];
 
 	cell.detailTextLabel.font = [UIFont systemFontOfSize:12.0];
-	cell.detailTextLabel.backgroundColor = [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:0];
 	cell.detailTextLabel.highlightedTextColor = [UIColor blackColor];
 	
 	cell.textLabel.text = traumaeWord[@"traumae"];
-	cell.detailTextLabel.text = traumaeWord[@"english"];
+	
+	// Details
+	
+	titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 300, 24)];
+	titleLabel.font = [UIFont fontWithName:@"Didot-Italic" size:24];
+	titleLabel.textAlignment = UITextAlignmentRight;
+	titleLabel.text = @"Adultspeak";
+	[cell addSubview:titleLabel];
+	
+	descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 35, 300, 20)];
+	descriptionLabel.font = [UIFont systemFontOfSize:12.0];
+	descriptionLabel.textAlignment = UITextAlignmentRight;
+	descriptionLabel.text = traumaeWord[@"type"];
+	[cell addSubview:descriptionLabel];
+	
+	typeIndicator = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 60)];
+	if( [traumaeWord[@"type"] isEqual:@"expression"] ){
+		typeIndicator.backgroundColor = [UIColor redColor];
+	}
+	
+	[cell addSubview:typeIndicator];
+	
+	
+	cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",traumaeWord[@"english"]];
+	
 	cell = [self templateCell:cell:indexPath];
 	
-	
-	if( [dicttype[indexPath.row] isEqual:@"core"] ){
-		cell.detailTextLabel.textColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:1];
+	if( [traumaeWord[@"type"] isEqual:@"expression"] ){
+		cell.detailTextLabel.textColor = [UIColor redColor];
 	}
-	if( [dicttype[indexPath.row] isEqual:@"end"] ){
-		cell.textLabel.textColor = [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1];
-		cell.detailTextLabel.alpha = 0;
-	}
-	if( [dicttype[indexPath.row] isEqual:@"ressource"] ){
-		cell.textLabel.text = dict[dictlist[indexPath.row]];
-		cell.detailTextLabel.text = @"";
-	}
-	
-	if( [dictlist[indexPath.row] isEqual:@"support"] ){
-		cell.detailTextLabel.textColor = [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:0.5];
-		cell.frame = CGRectMake(0, 0, screen.size.width, 300);
-		cell.textLabel.text = @"Support";
-		cell.detailTextLabel.text = @"Visit the application support";		
-	}
-	
-	cellIds[indexPath.row] = dictlist[indexPath.row];
 	
 	return cell;
 	
@@ -248,7 +252,7 @@
 	if( [dictlist[indexPath.row] isEqual:filter] ){
 		return 100;
 	}
-    return 48;
+    return 60;
 }
 
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
