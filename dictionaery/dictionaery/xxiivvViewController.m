@@ -5,6 +5,7 @@
 //  Created by Devine Lu Linvega on 2013-06-28.
 //  Copyright (c) 2013 XXIIVV. All rights reserved.
 //
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 #import "xxiivvViewController.h"
 
@@ -83,7 +84,23 @@
 -(void)dictionaeryTypesColoursCreate :(NSDictionary*)sequence
 {
 	
-	NSArray *dictColours = [NSArray arrayWithObjects: @"value1", @"key1", @"value2", @"key2",@"value1", @"key1", @"value2", @"key2", @"key1", @"value2", @"key2",@"value1", @"key1", @"value2", @"key2", nil];
+	NSArray *dictColours = [NSArray arrayWithObjects:
+							UIColorFromRGB(0xCCCCCC),
+							UIColorFromRGB(0xDDDDDD),
+							UIColorFromRGB(0xEEEEEE),
+							UIColorFromRGB(0x222222),
+							UIColorFromRGB(0x555555),
+							UIColorFromRGB(0xA0CBC0),
+							UIColorFromRGB(0xCBA0AB),
+							UIColorFromRGB(0xE93C62),
+							UIColorFromRGB(0xCCCCCC),
+							UIColorFromRGB(0xDDDDDD),
+							UIColorFromRGB(0xEEEEEE),
+							UIColorFromRGB(0x000000),
+							UIColorFromRGB(0x888888),
+							UIColorFromRGB(0xA0CBC0),
+							UIColorFromRGB(0xCBA0AB),
+							UIColorFromRGB(0xE93C62),nil];
 	
 	NSMutableDictionary *dictTypesTemp = [[NSMutableDictionary alloc]init];
 	
@@ -105,6 +122,7 @@
 	}
 
 }
+
 
 - (void) dictionaerySequenceFilter
 {
@@ -254,13 +272,11 @@
 	[cell addSubview:titleLabel];
 	
 	// Alternative meanings
-	
 	descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(100, 34, 300, 20)];
 	descriptionLabel.font = [UIFont systemFontOfSize:12.0];
 	descriptionLabel.textAlignment = UITextAlignmentLeft;
 	descriptionLabel.text = traumaeWord[@"type"];
 	[cell addSubview:descriptionLabel];
-	
 	
 	NSString *traumaeWordAlternatives = @"";
 	
@@ -273,16 +289,12 @@
 		traumaeWordAlternatives = [traumaeWordAlternatives substringToIndex:traumaeWordAlternatives.length-2];
 	}
 	
-	
 	descriptionLabel.text = traumaeWordAlternatives;
 	
-	typeIndicator = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 6, 60)];
-	if( [traumaeWord[@"type"] isEqual:@"expression"] ){
-		typeIndicator.backgroundColor = [UIColor redColor];
-		NSLog(@"TYPE COLOUR: %@",dicttype[traumaeWord[@"type"]]);
+	typeIndicator = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 6, 100)];
+	if( ![dicttype[traumaeWord[@"type"]] isEqual:@""] ){
+		typeIndicator.backgroundColor = dicttype[traumaeWord[@"type"]];
 	}
-	
-	NSLog(@"%@",dicttype);
 	
 	[cell addSubview:typeIndicator];
 	
@@ -294,10 +306,19 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	if( [dictlist[indexPath.row] isEqual:filter] ){
-		return 100;
+	// here
+	if( [nodeDict[[[nodeDict allKeys] objectAtIndex:indexPath.row]][@"traumae"] isEqualToString:filter] ){
+		return 60;
 	}
     return 60;
+}
+
+- (UITableViewCell *) templateCell :(UITableViewCell*)cell :(NSDictionary*)cellData
+{
+	if([cellData[@"traumae"] isEqualToString:filter]){
+		cell.backgroundColor = [UIColor colorWithWhite:0.97 alpha:1];
+	}
+	return cell;
 }
 
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -348,9 +369,6 @@
 	[self filterSet:filter];
 }
 
-
-
-
 - (void) dictLoad
 {
 	NSLog(@"Filter: %@",filter);
@@ -358,14 +376,6 @@
 	[target reloadData];
 	[self.tableView setContentOffset:CGPointZero animated:FALSE];
     [self setupBackButton];
-}
-
-- (UITableViewCell *) templateCell :(UITableViewCell*)cell :(NSDictionary*)cellData
-{
-	if([cellData[@"traumae"] isEqualToString:filter]){
-		cell.backgroundColor = [UIColor colorWithWhite:0.97 alpha:1];
-	}
-	return cell;
 }
 
 - (void)didReceiveMemoryWarning
