@@ -75,26 +75,35 @@
 {
 	NSLog(@"+ Dict    | Sequence");
 	nodeRaw = sequence;
-	[self dictionaerySequenceFilter];
 	[self dictionaeryTypesColoursCreate:sequence];
+	[self dictionaerySequenceFilter];
 	[self filterSet:nil];
 }
 
 -(void)dictionaeryTypesColoursCreate :(NSDictionary*)sequence
 {
 	
-	NSDictionary *dictColours = [NSDictionary dictionaryWithObjectsAndKeys: @"value1", @"key1", @"value2", @"key2", nil];
+	NSArray *dictColours = [NSArray arrayWithObjects: @"value1", @"key1", @"value2", @"key2",@"value1", @"key1", @"value2", @"key2", @"key1", @"value2", @"key2",@"value1", @"key1", @"value2", @"key2", nil];
 	
-	dicttype = [[NSMutableDictionary alloc]init];
+	NSMutableDictionary *dictTypesTemp = [[NSMutableDictionary alloc]init];
 	
 	for (NSString *key in sequence) {
 		id value = [sequence objectForKey:key];
-		//		NSLog(@"+ %@", value[@"type"]);
-		dicttype[value[@"type"]] = @"1";
+		dictTypesTemp[value[@"type"]] = value[@"type"];
 	}
-	dicttype[@"test"] = @"hey";
-	NSLog(@"!! %@",dicttype);
 	
+	NSArray *dictTypesStore = [dictTypesTemp allKeys];
+	dicttype = [[NSMutableDictionary alloc]initWithCapacity:30];
+	
+	int count = 0;
+	for (NSString *key in dictTypesStore) {
+		dicttype[key] = dictColours[count];
+		count += 1;
+		if(count>[dictColours count]-1){
+			break;
+		}
+	}
+
 }
 
 - (void) dictionaerySequenceFilter
@@ -260,17 +269,24 @@
 			traumaeWordAlternatives = [NSString stringWithFormat:@"%@, %@",alt, traumaeWordAlternatives];
 		}
 	}
+	if (traumaeWordAlternatives.length > 4) {
+		traumaeWordAlternatives = [traumaeWordAlternatives substringToIndex:traumaeWordAlternatives.length-2];
+	}
+	
 	
 	descriptionLabel.text = traumaeWordAlternatives;
 	
 	typeIndicator = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 6, 60)];
 	if( [traumaeWord[@"type"] isEqual:@"expression"] ){
 		typeIndicator.backgroundColor = [UIColor redColor];
+		NSLog(@"TYPE COLOUR: %@",dicttype[traumaeWord[@"type"]]);
 	}
+	
+	NSLog(@"%@",dicttype);
 	
 	[cell addSubview:typeIndicator];
 	
-	cell = [self templateCell:cell:indexPath];
+	cell = [self templateCell:cell:traumaeWord];
 
 	return cell;
 	
@@ -306,6 +322,11 @@
 -(void)filterSet:(NSString*)newFilter {
 	
 	filter = newFilter;
+	
+	if ([filter isEqualToString:@""]) {
+		filter = nil;
+	}
+	
 	NSLog(@"+ Filter  | Set: %@",filter);
 	[self setupBackButton];
 	[self setupNavigationBar];
@@ -339,9 +360,11 @@
     [self setupBackButton];
 }
 
-- (UITableViewCell *) templateCell :(UITableViewCell*) cell :(NSIndexPath*)indexPath
+- (UITableViewCell *) templateCell :(UITableViewCell*)cell :(NSDictionary*)cellData
 {
-	
+	if([cellData[@"traumae"] isEqualToString:filter]){
+		cell.backgroundColor = [UIColor colorWithWhite:0.97 alpha:1];
+	}
 	return cell;
 }
 
@@ -517,6 +540,9 @@
 }
 //Hide keyboard if they cancel search
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+	[self filterSet:nil];
+    [self dictLoad];
+	[self setupNavigationBar];
     [self.searchBar resignFirstResponder];
 }
 
@@ -524,19 +550,16 @@
 
 - (IBAction)goBack:(id)sender {
     [self.searchBar resignFirstResponder];
-    if(filterHistory.count>1) {
-        NSString *newFilter = [filterHistory objectAtIndex:filterHistory.count-1];
-        [filterHistory removeLastObject];
-        if([filter isEqual:newFilter]) {
-            [self goBack:sender];
-            return;
-        }
-        filter = newFilter;
-    }
-    else {
-        [self filterSet:nil];
-        
-    }
+    
+	if( filter.length > 1){
+		filter = [filter substringToIndex:filter.length-2];
+	}
+	else{
+		filter = nil;
+	}
+	[self filterSet:filter];
+	
+	
     [self dictLoad];
 	[self setupNavigationBar];
 }

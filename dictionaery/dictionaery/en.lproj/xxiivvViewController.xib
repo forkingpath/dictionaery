@@ -56,7 +56,7 @@
                     <color key="barTintColor" red="0.96078437569999997" green="0.96078437569999997" blue="0.96078437569999997" alpha="1" colorSpace="deviceRGB"/>
                     <items>
                         <navigationItem title="Translate" id="45">
-                            <barButtonItem key="leftBarButtonItem" enabled="NO" title="Back" style="plain" id="64" userLabel="Update">
+                            <barButtonItem key="leftBarButtonItem" enabled="NO" title=" Back" style="plain" id="64" userLabel="Update">
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
                                     <action selector="goBack:" destination="-1" id="87"/>
