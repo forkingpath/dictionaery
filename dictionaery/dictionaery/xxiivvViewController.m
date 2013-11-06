@@ -143,7 +143,12 @@
 		if(!filter && [value[@"traumae"] length] == 2){
 			[nodeTemp setObject:value forKey:value[@"traumae"]];
 		}
-		
+		if(![self isTraumae:filter] ){
+			if ([value[@"english"] rangeOfString:filter].location != NSNotFound)
+			{
+				[nodeTemp setObject:value forKey:value[@"traumae"]];
+			}
+		}
 	}
 	return nodeTemp;
 }
