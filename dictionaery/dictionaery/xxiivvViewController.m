@@ -23,7 +23,7 @@
 
 - (void) start
 {
-	NSLog(@"+ Start   | Init");
+	[self statusButton:@"Init"];
     [self registerForKeyboardNotifications];
 	
 	[self templateStart];
@@ -34,7 +34,7 @@
     [self dictionaeryLoad:nil];
 	
     [self filterSet:nil];
-	NSLog(@"+ Start   | Started");
+	[self statusButton:@"Loading"];
 }
 
 // ------------------------
@@ -61,20 +61,20 @@
 
 - (void) dictionaeryStart
 {
-	NSLog(@"+ Dict    | Start");
+	[self statusButton:@"Start"];
 		
 }
 
 - (void) dictionaeryUpdate
 {
-	NSLog(@"+ Dict    | Update");
+	[self statusButton:@"Updating"];
 	self.navigationBarTitle.title = @"Downloading..";
 	[self apiPull];
 }
 
 - (void) dictionaerySequence :(NSDictionary*)sequence
 {
-	NSLog(@"+ Dict    | Sequence");
+	[self statusButton:@"Ready"];
 	nodeRaw = sequence;
 //	[self dictionaeryTypesColoursCreate:sequence];
 	[self dictionaerySequenceFilter];
@@ -126,7 +126,6 @@
 
 - (void) dictionaerySequenceFilter
 {
-	NSLog(@"+ Dict    | Filtering: %@",filter);
 	nodeDict = [self dictionaerySequenceFilterLoop];
 }
 
@@ -167,8 +166,6 @@
 			if ( [[value[@"adultspeak"] substringToIndex:filter.length] isEqualToString:filter]) {
 				[nodeTemp setObject:value forKey:value[@"traumae"]];
 			}
-			
-			NSLog(@"> %@",value[@"adultspeak"]);
 		}
 		
 	}
@@ -177,7 +174,7 @@
 
 
 -(void)dictionaeryLoad:(NSString*)newData {
-	NSLog(@"+ Dict    | Loading");
+	[self statusButton:@"Loading"];
     if(newData) {
         NSError *error;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: [newData dataUsingEncoding:NSUTF8StringEncoding] options: NSJSONReadingMutableContainers error: &error];
@@ -207,7 +204,7 @@
             return;
         }
     }
-	NSLog(@"+ Dict    | Could not load");
+	[self statusButton:@"Error"];
 }
 
 
@@ -217,7 +214,7 @@
 
 - (void)apiPull
 {
-	NSLog(@"+ API     | Pulling entire dict");
+	[self statusButton:@"Downloading"];
 	NSURL *myURL = [NSURL URLWithString: @"http://api.xxiivv.com/?key=traumae" ];
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:myURL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:60];
 	[[NSURLConnection alloc] initWithRequest:request delegate:self];
@@ -240,7 +237,7 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-	NSLog(@"+ API     | Found dictionaery");
+	[self statusButton:@"Found"];
 	NSString *response = [[NSString alloc] initWithData:responseData encoding: NSASCIIStringEncoding];
 	[self dictionaeryLoad:response];
 }
@@ -260,7 +257,6 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	target = tableView;
-	NSLog(@"+ Table   | Item Count: %d",[nodeDict count]);
 	return [nodeDict count];
 }
 
@@ -400,7 +396,7 @@
 {
 	// here
 	if( [nodeDict[[[nodeDict allKeys] objectAtIndex:indexPath.row]][@"traumae"] isEqualToString:filter] ){
-		return 120;
+		return 130;
 	}
     return 60;
 }
@@ -435,6 +431,10 @@
 	
 	if([nodeDict[[[nodeDict allKeys] objectAtIndex:indexPath.row]][@"children"] intValue] > 0){
 		[self filterSet:nodeDict[[[nodeDict allKeys] objectAtIndex:indexPath.row]][@"traumae"]];
+		[self statusButton:@"Traversing"];
+	}
+	else{
+		[self statusButton:@"Limited"];
 	}
 	
 }
@@ -451,7 +451,6 @@
 		filter = nil;
 	}
 	
-	NSLog(@"+ Filter  | Set: %@",filter);
 	[self setupBackButton];
 	[self setupNavigationBar];
 	[self dictionaerySequenceFilter];
@@ -466,13 +465,14 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
+	[self statusButton:@"Searching"];
 	filter = searchText;
 	[self filterSet:filter];
 }
 
 - (void) dictLoad
 {
-	NSLog(@"Filter: %@",filter);
+	[self statusButton:@"Filtering"];
 	[self templateUpdate];
 	[target reloadData];
 	[self.tableView setContentOffset:CGPointZero animated:FALSE];
@@ -643,6 +643,8 @@
     UIEdgeInsets contentInsets = UIEdgeInsetsZero;
     self.tableView.contentInset = contentInsets;
     self.tableView.scrollIndicatorInsets = contentInsets;
+	
+	[self statusButton:@"Idle"];
     
 }
 //Hide keyboard if they hit the search button
@@ -660,6 +662,9 @@
 
 
 - (IBAction)goBack:(id)sender {
+	
+	[self statusButton:@"Searching"];
+	
     [self.searchBar resignFirstResponder];
     
 	if( filter.length > 1){
@@ -676,28 +681,7 @@
 }
 
 -(void)setupBackButton {
-    
-//    NSString *lastFilter = nil;
-//    if(filterHistory.count>0) {
-//        lastFilter = [filterHistory objectAtIndex:filterHistory.count-1];
-//        if([lastFilter isEqual:filter]) {
-//            lastFilter=nil;
-//            if(filterHistory.count>1)
-//                lastFilter = [filterHistory objectAtIndex:filterHistory.count-2];
-//        }
-//    }
-//    if(lastFilter && ![filter isEqual:@"support"]) {
-//        [self.navigationBarTitle setLeftBarButtonItem:self.backButton animated:NO];
-//        if([lastFilter isEqual:@""])
-//            lastFilter=@"Back";
-//        self.backButton.title=[[self cleanString:lastFilter] capitalizedString];
-//        
-//        [self.backButton setEnabled:true];
-//    }
-//    else {
-//        [self.navigationBarTitle setLeftBarButtonItem:nil animated:NO];
-//        [self.backButton setEnabled:false];
-//    }
+
 }
 
 -(void)setupNavigationBar
@@ -715,6 +699,12 @@
 -(NSString*)cleanString:(NSString*)input {
     return [[[input lowercaseString] stringByReplacingOccurrencesOfString:@"|" withString:@""] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     return input;
+}
+
+-(void)statusButton :(NSString*)text
+{
+	[self.statusButton setTitle:text];
+
 }
 
 @end

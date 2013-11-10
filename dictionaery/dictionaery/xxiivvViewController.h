@@ -15,6 +15,7 @@
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *dictUpdate;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *backButton;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *statusButton;
 - (IBAction)goBack:(id)sender;
 - (IBAction)dictUpdate:(id)sender;
 @end

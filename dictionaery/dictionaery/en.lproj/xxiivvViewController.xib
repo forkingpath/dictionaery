@@ -12,6 +12,7 @@
                 <outlet property="navigationBar" destination="44" id="47"/>
                 <outlet property="navigationBarTitle" destination="45" id="54"/>
                 <outlet property="searchBar" destination="70" id="72"/>
+                <outlet property="statusButton" destination="CzP-5I-eui" id="CCz-zP-R15"/>
                 <outlet property="tableView" destination="8" id="41"/>
                 <outlet property="view" destination="6" id="7"/>
             </connections>
@@ -41,11 +42,11 @@
                         <outlet property="delegate" destination="-1" id="71"/>
                     </connections>
                 </searchBar>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" style="plain" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="8">
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="8">
                     <rect key="frame" x="0.0" y="108" width="320" height="460"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <color key="separatorColor" white="0.83793339416058399" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="separatorColor" white="0.87311815693430661" alpha="1" colorSpace="calibratedWhite"/>
                     <inset key="separatorInset" minX="15" minY="0.0" maxX="0.0" maxY="0.0"/>
                     <connections>
                         <outlet property="dataSource" destination="-1" id="19"/>
@@ -63,6 +64,9 @@
                                 <connections>
                                     <action selector="goBack:" destination="-1" id="87"/>
                                 </connections>
+                            </barButtonItem>
+                            <barButtonItem key="rightBarButtonItem" enabled="NO" title="Updated" id="CzP-5I-eui">
+                                <color key="tintColor" red="0.32212522886498413" green="0.43899305941537831" blue="0.54772763324873097" alpha="1" colorSpace="calibratedRGB"/>
                             </barButtonItem>
                         </navigationItem>
                     </items>
