@@ -22,6 +22,7 @@
 UILabel *titleLabel;
 UILabel *descriptionLabel;
 UIView *typeIndicator;
+UIImageView *arrowImage;
 
 NSMutableDictionary *dict;
 NSMutableDictionary *dicttype;
@@ -29,6 +30,7 @@ NSMutableDictionary *dicttype;
 NSDictionary *nodeRaw;
 NSDictionary *nodeDict;
 NSDictionary *nodeDictFiltered;
+
 
 NSMutableArray *dictlist;
 NSArray *dictPerm;
