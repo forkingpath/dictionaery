@@ -24,6 +24,10 @@ UILabel *descriptionLabel;
 UIView *typeIndicator;
 UIImageView *arrowImage;
 
+UILabel *detailsTitle;
+UILabel *detailsTraumae;
+UILabel *detailsTranslations;
+
 NSMutableDictionary *dict;
 NSMutableDictionary *dicttype;
 

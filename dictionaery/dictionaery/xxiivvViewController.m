@@ -145,42 +145,31 @@
 			[nodeTemp setObject:value forKey:value[@"traumae"]];
 		}
 		// If traumae
-		else if( [value[@"traumae"] length] >= [filter length] ){
+		if( [value[@"traumae"] length] >= [filter length] ){
 			if ( [[value[@"traumae"] substringToIndex:filter.length] isEqualToString:filter]) {
 				[nodeTemp setObject:value forKey:value[@"traumae"]];
 			}
 		}
 		// If English
-		else if( [value[@"english"] length] >= [filter length] ){
+		if( [value[@"english"] length] >= [filter length] ){
 			if ( [[value[@"english"] substringToIndex:filter.length] isEqualToString:filter]) {
-				[nodeTemp setObject:value forKey:value[@"english"]];
+				[nodeTemp setObject:value forKey:value[@"traumae"]];
 			}
 		}
 		// If Type
-		else if( [value[@"type"] length] >= [filter length] ){
+		if( [value[@"type"] length] >= [filter length] ){
 			if ( [[value[@"type"] substringToIndex:filter.length] isEqualToString:filter]) {
-				[nodeTemp setObject:value forKey:value[@"type"]];
+				[nodeTemp setObject:value forKey:value[@"traumae"]];
 			}
 		}
-		
-//		if( [filter isEqualToString:[value[@"traumae"] substringToIndex:filter.length]] && [value[@"traumae"] length] == [filter length]+2 ){
-//			[nodeTemp setObject:value forKey:value[@"traumae"]];
-//		}
-		
-		//
-//		if(![self isTraumae:filter] ){
-//			if ([value[@"english"] rangeOfString:filter].location != NSNotFound)
-//			{
-//				[nodeTemp setObject:value forKey:value[@"traumae"]];
-//			}
-//		}
-//		//
-//		if( [NSString stringWithFormat:@"%@",value[@"traumae"]].length > filter.length-1 ){
-//			if( [filter isEqualToString:[value[@"traumae"] substringToIndex:filter.length]] && [value[@"traumae"] length] == [filter length]+2 ){
-//				[nodeTemp setObject:value forKey:value[@"traumae"]];
-//			}
-//		}
-		//
+		// If Adultspeak
+		if( [value[@"adultspeak"] isEqualToString:filter] ){
+			if ( [[value[@"adultspeak"] substringToIndex:filter.length] isEqualToString:filter]) {
+				[nodeTemp setObject:value forKey:value[@"traumae"]];
+			}
+			
+			NSLog(@"> %@",value[@"adultspeak"]);
+		}
 		
 	}
 	return nodeTemp;
@@ -303,10 +292,9 @@
 	titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 24)];
 	titleLabel.font = [UIFont fontWithName:@"Didot-Italic" size:24];
 	titleLabel.textAlignment = UITextAlignmentLeft;
-	titleLabel.text = traumaeWord[@"adultspeak"];
 	titleLabel.alpha = 0.5;
 	if ([traumaeWord[@"adultspeak"] isEqualToString:traumaeWord[@"traumae"]]) {
-		titleLabel.hidden = YES;
+		titleLabel.text = traumaeWord[@"adultspeak"];
 	}
 	[cell addSubview:titleLabel];
 	
@@ -355,6 +343,53 @@
 	}
 	
 	
+	// Details
+//
+//	detailsTitle.hidden = YES;
+//	detailsTranslations.hidden = YES;
+//	detailsTraumae.hidden = YES;
+	
+	
+	detailsTraumae = [[UILabel alloc] initWithFrame:CGRectMake(15, 15, 200, 24)];
+	detailsTraumae.font = [UIFont fontWithName:@"Septambres-Revisit" size:24];
+	detailsTraumae.textAlignment = UITextAlignmentLeft;
+	detailsTraumae.text = [self toQwerty:traumaeWord[@"traumae"]];
+	detailsTraumae.textColor = [UIColor whiteColor];
+	detailsTraumae.backgroundColor = [UIColor clearColor];
+	[cell addSubview:detailsTraumae];
+	
+	
+	detailsTitle = [[UILabel alloc] initWithFrame:CGRectMake(120, 15, 200, 24)];
+	detailsTitle.font = [UIFont fontWithName:@"Didot-Bold" size:28];
+	detailsTitle.textAlignment = UITextAlignmentLeft;
+	detailsTitle.text = [traumaeWord[@"adultspeak"] uppercaseString];
+	detailsTitle.textColor = [UIColor whiteColor];
+	[cell addSubview:detailsTitle];
+	
+	
+	int labelHeight = ([traumaeWord[@"alternatives"] count]+1)*15;
+	
+	detailsTranslations = [[UILabel alloc] initWithFrame:CGRectMake(120, 40, 200, labelHeight)];
+	detailsTranslations.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+	detailsTranslations.textAlignment = UITextAlignmentLeft;
+	detailsTranslations.numberOfLines = 4;
+	detailsTranslations.textColor = [UIColor whiteColor];
+	traumaeWordAlternatives = traumaeWord[@"english"];
+	for (NSString *alt in traumaeWord[@"alternatives"]) {
+		if (![alt isEqualToString:cell.detailTextLabel.text]) {
+			traumaeWordAlternatives = [NSString stringWithFormat:@"%@ \n%@ ",alt, traumaeWordAlternatives];
+		}
+	}
+	detailsTranslations.text = traumaeWordAlternatives;
+	[cell addSubview:detailsTranslations];
+	
+	
+	detailsTranslations.hidden = YES;
+	detailsTitle.hidden = YES;
+	detailsTraumae.hidden = YES;
+	
+	
+	
 	cell = [self templateCell:cell:traumaeWord];
 
 	return cell;
@@ -364,16 +399,25 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	// here
-//	if( [nodeDict[[[nodeDict allKeys] objectAtIndex:indexPath.row]][@"traumae"] isEqualToString:filter] ){
-//		return 100;
-//	}
+	if( [nodeDict[[[nodeDict allKeys] objectAtIndex:indexPath.row]][@"traumae"] isEqualToString:filter] ){
+		return 120;
+	}
     return 60;
 }
 
 - (UITableViewCell *) templateCell :(UITableViewCell*)cell :(NSDictionary*)cellData
 {
 	if([cellData[@"traumae"] isEqualToString:filter]){
-		cell.backgroundColor = [UIColor colorWithWhite:0.97 alpha:1];
+		cell.backgroundColor = [UIColor blackColor];
+		
+		cell.textLabel.hidden = YES;
+		cell.detailTextLabel.hidden = YES;
+		descriptionLabel.hidden = YES;
+		titleLabel.hidden = YES;
+		
+		detailsTitle.hidden = NO;
+		detailsTranslations.hidden = NO;
+		detailsTraumae.hidden = NO;
 	}
 	return cell;
 }
@@ -422,9 +466,7 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-	NSLog(@"!!!!! %@", searchText);
 	filter = searchText;
-//	[self dictionaerySequenceFilter];
 	[self filterSet:filter];
 }
 
