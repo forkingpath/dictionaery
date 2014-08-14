@@ -136,7 +136,6 @@
 		id value = [nodeRaw objectForKey:key];
 		// Default letters
 		if(!filter && [value[@"traumae"] length] == 2){
-            NSLog([NSString stringWithFormat:@"%@/%@/%@", @"Value ", key, @" OK"]);
 			[nodeTemp setObject:value forKey:value[@"traumae"]];
 		}
 		// Search is equal
