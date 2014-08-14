@@ -134,9 +134,9 @@
 	NSMutableDictionary *nodeTemp = [[NSMutableDictionary alloc]initWithCapacity:900];
 	for (NSString* key in nodeRaw) {
 		id value = [nodeRaw objectForKey:key];
-		
 		// Default letters
 		if(!filter && [value[@"traumae"] length] == 2){
+            NSLog([NSString stringWithFormat:@"%@/%@/%@", @"Value ", key, @" OK"]);
 			[nodeTemp setObject:value forKey:value[@"traumae"]];
 		}
 		// Search is equal
@@ -144,31 +144,32 @@
 			[nodeTemp setObject:value forKey:value[@"traumae"]];
 		}
 		// If traumae
-		if( [value[@"traumae"] length] >= [filter length] ){
+		if(filter && [value[@"traumae"] length] >= [filter length] ){
 			if ( [[value[@"traumae"] substringToIndex:filter.length] isEqualToString:filter]) {
 				[nodeTemp setObject:value forKey:value[@"traumae"]];
 			}
 		}
 		// If English
-		if( [value[@"english"] length] >= [filter length] ){
+		if(filter && [value[@"english"] length] >= [filter length] ){
 			if ( [[value[@"english"] substringToIndex:filter.length] isEqualToString:filter]) {
 				[nodeTemp setObject:value forKey:value[@"traumae"]];
 			}
 		}
 		// If Type
-		if( [value[@"type"] length] >= [filter length] ){
+		if(filter && [value[@"type"] length] >= [filter length] ){
 			if ( [[value[@"type"] substringToIndex:filter.length] isEqualToString:filter]) {
 				[nodeTemp setObject:value forKey:value[@"traumae"]];
 			}
 		}
 		// If Adultspeak
-		if( [value[@"adultspeak"] isEqualToString:filter] ){
+		if(filter && [value[@"adultspeak"] isEqualToString:filter] ){
 			if ( [[value[@"adultspeak"] substringToIndex:filter.length] isEqualToString:filter]) {
 				[nodeTemp setObject:value forKey:value[@"traumae"]];
 			}
 		}
-		
+	
 	}
+    
 	return nodeTemp;
 }
 
